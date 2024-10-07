@@ -1,0 +1,62 @@
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  passwordHash     String?   // Nullable for OAuth-based users
+  name             String
+  profilePicture   String?
+  contactInfo      String?
+  isGrower         Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  
+  // Relationships
+  produce          Produce[]
+  tradeProposals   Trade[]   @relation("proposer")
+  tradeRequests    Trade[]   @relation("receiver")
+}
+
+model Produce {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  quantity    Int
+  isDisabled  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  
+  // Foreign Key
+  growerId    Int
+  grower      User      @relation(fields: [growerId], references: [id])
+
+  // Relationships
+  tradesProposed Trade[] @relation("proposedItem")
+  tradesRequested Trade[] @relation("requestedItem")
+}
+
+model Trade {
+  id               Int      @id @default(autoincrement())
+  status           String   @default("pending") // Can be 'pending', 'accepted', 'rejected'
+  createdAt        DateTime @default(now())
+
+  // Foreign Keys and Relationships
+  proposerId       Int
+  proposer         User     @relation("proposer", fields: [proposerId], references: [id])
+
+  receiverId       Int
+  receiver         User     @relation("receiver", fields: [receiverId], references: [id])
+
+  proposedItemId   Int
+  proposedItem     Produce  @relation("proposedItem", fields: [proposedItemId], references: [id])
+
+  requestedItemId  Int
+  requestedItem    Produce  @relation("requestedItem", fields: [requestedItemId], references: [id])
+}
