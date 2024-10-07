@@ -65,3 +65,54 @@ A community-driven platform for individuals who grow edible plants, fruits, and 
 
 ## Project Structure
 
+/project-root  
+|-- /components           # Reusable React components  
+|-- /lib                  # Utility functions (e.g., authentication helpers)  
+|-- /pages                # Page components and API routes  
+|   |-- /api              # Next.js API routes for server-side functionality  
+|   |-- index.js          # Homepage  
+|   |-- profile.js        # Profile management page  
+|   |-- /marketplace      # Marketplace-related pages  
+|-- /prisma               # Database schema and Prisma client  
+|-- /public               # Static assets (e.g., images, icons)  
+|-- /styles               # Global and component-specific styles  
+|-- .env.example          # Example environment variables file  
+|-- prisma/schema.prisma  # Database schema definition  
+|-- next.config.js        # Next.js configuration file  
+
+
+
+## Future Enhancements
+
+- **Local Area Filtering**: Implement search filters based on location.
+- **Push Notifications**: Notify growers about new trade proposals or messages.
+- **Payment Integration**: Allow payment for produce (post-MVP).
+
+## Contributing
+
+1. Fork the repository.
+2. Create a new branch:
+    ```bash
+    git checkout -b feature-name
+    ```
+3. Make your changes and commit them:
+    ```bash
+    git commit -m "Add some feature"
+    ```
+4. Push to the branch:
+    ```bash
+    git push origin feature-name
+    ```
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+- [Next.js](https://nextjs.org/)
+- [NextAuth](https://next-auth.js.org/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+
