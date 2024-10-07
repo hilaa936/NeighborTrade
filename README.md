@@ -65,20 +65,18 @@ A community-driven platform for individuals who grow edible plants, fruits, and 
 
 ## Project Structure
 
-/project-root  
-|-- /components           # Reusable React components  
-|-- /lib                  # Utility functions (e.g., authentication helpers)  
-|-- /pages                # Page components and API routes  
-|   |-- /api              # Next.js API routes for server-side functionality  
-|   |-- index.js          # Homepage  
-|   |-- profile.js        # Profile management page  
-|   |-- /marketplace      # Marketplace-related pages  
-|-- /prisma               # Database schema and Prisma client  
-|-- /public               # Static assets (e.g., images, icons)  
-|-- /styles               # Global and component-specific styles  
-|-- .env.example          # Example environment variables file  
-|-- prisma/schema.prisma  # Database schema definition  
-|-- next.config.js        # Next.js configuration file  
+my-produce-app/
+|-- src/
+|   |-- app/           # Contains page components and route handlers (new App Router in Next.js)
+|   |-- components/    # Folder for reusable components
+|   |-- styles/        # Contains global CSS (including Tailwind CSS integration)
+|-- .eslintrc.json     # ESLint configuration file
+|-- next.config.js     # Next.js configuration
+|-- postcss.config.js  # PostCSS configuration for Tailwind
+|-- tailwind.config.js # Tailwind CSS configuration file
+|-- package.json       # Project dependencies
+|-- public/            # Public assets
+|-- README.md          # Project README
 
 
 
