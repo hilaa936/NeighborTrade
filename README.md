@@ -64,22 +64,40 @@ A community-driven platform for individuals who grow edible plants, fruits, and 
     - The app will be available at `http://localhost:3000`.
 
 ## Project Structure
-
+```
 my-produce-app/
-|-- src/
-|   |-- app/           # Contains page components and route handlers (new App Router in Next.js)
-|   |-- components/    # Folder for reusable components
-|   |-- styles/        # Contains global CSS (including Tailwind CSS integration)
-|-- .eslintrc.json     # ESLint configuration file
-|-- next.config.js     # Next.js configuration
-|-- postcss.config.js  # PostCSS configuration for Tailwind
-|-- tailwind.config.js # Tailwind CSS configuration file
-|-- package.json       # Project dependencies
-|-- public/            # Public assets
-|-- README.md          # Project README
+├── src/
+│   ├── app/                     # Contains page components and route handlers (Next.js App Router)
+│   │   ├── marketplace/         # Marketplace-related pages
+│   │   │   └── page.js          # Marketplace page
+│   │   ├── profile/             # Profile management pages
+│   │   │   └── page.js          # Profile page
+│   │   └── page.js              # Homepage
+│   │
+│   ├── components/              # Reusable React components
+│   │   ├── Header.js            # Example header component
+│   │   └── Footer.js            # Footer component (example)
+│   │
+│   ├── lib/                     # Utility functions (e.g., authentication helpers, API calls)
+│   │   └── auth.js              # Authentication utility functions (example)
+│   │
+│   ├── styles/                  # Global and component-specific styles
+│   │   └── globals.css          # Global styles (includes Tailwind CSS)
+│
+├── public/                      # Public assets (e.g., images, icons)
+│   ├── favicon.ico              # Favicon
+│   └── logo.png                 # Example logo image
+│
+├── .eslintrc.json               # ESLint configuration file
+├── next.config.js               # Next.js configuration
+├── package.json                 # Project dependencies
+├── postcss.config.js            # PostCSS configuration for Tailwind
+├── tailwind.config.js           # Tailwind CSS configuration
+└── README.md                    # Project README
 
 
 
+```
 ## Future Enhancements
 
 - **Local Area Filtering**: Implement search filters based on location.
