@@ -1,18 +1,17 @@
 // src/app/api/produce/route.js
-import prisma from "../../../lib/prisma";
+
+import prisma from "@/lib/prisma";
 
 export async function POST(request) {
   const data = await request.json();
 
   try {
-    const produce = await prisma.produce.create({
-      data: {
-        growerId: data.growerId,
-        name: data.name,
-        description: data.description || "",
-        quantity: data.quantity,
-        isDisabled: data.isDisabled || false,
-      },
+    const produce = await createProduce({
+      growerId: data.growerId,
+      name: data.name,
+      description: data.description,
+      quantity: data.quantity,
+      isDisabled: data.isDisabled,
     });
     return new Response(JSON.stringify(produce), { status: 201 });
   } catch (error) {

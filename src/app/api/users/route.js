@@ -1,29 +1,44 @@
 // src/app/api/users/route.js
-import prisma from "../../../lib/prisma";
-import bcrypt from "bcrypt";
+import { createUser, getUserByEmail } from "@/lib/user";
+import { NextResponse } from "next/server";
 
+// POST route to create a new user
 export async function POST(request) {
-  const data = await request.json();
-
   try {
-    // Hash the password before storing it
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const data = await request.json();
 
-    const user = await prisma.user.create({
-      data: {
-        email: data.email,
-        name: data.name,
-        passwordHash: hashedPassword, // Store the hashed password
-        isGrower: data.isGrower || false,
-        profilePicture: data.profilePicture || null,
-        contactInfo: data.contactInfo || null,
-      },
+    // Basic validation for required fields
+    if (!data.email || !data.username || !data.password) {
+      return NextResponse.json(
+        { error: "Name, email, and password are required" },
+        { status: 400 }
+      );
+    }
+
+    // Check if the user already exists
+    const existingUser = await getUserByEmail(data.email);
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Email already registered" },
+        { status: 400 }
+      );
+    }
+    console.log(data.toString());
+    // Create the new user (using the helper function)
+    const newUser = await createUser({
+      name: data.name,
+      email: data.email,
+      password: data.password, // Password will be hashed in the helper
     });
-    return new Response(JSON.stringify(user), { status: 201 });
+
+    // Return the created user with status 201
+    return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
-    console.error("Error creating user:", error); // Log the specific error
-    return new Response(
-      JSON.stringify({ error: "User creation failed", details: error.message }),
+    console.error("Error creating user:", error); // Log the error
+
+    // Internal server error, do not expose details to the user
+    return NextResponse.json(
+      { error: "User creation failed" },
       { status: 500 }
     );
   }
