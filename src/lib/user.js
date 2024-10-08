@@ -34,8 +34,14 @@ export const verifyUserPassword = async (password, hashedPassword) => {
 };
 
 // Create a new user (with automatic password hashing)
-export const createUser = async ({ username, email, password }) => {
-  if (!username || !email || password == null) {
+export const createUser = async ({
+  username,
+  email,
+  password,
+  profilePicture = "",
+  provider = "Email",
+}) => {
+  if (provider === "Email" && (!username || !email || !password)) {
     throw new Error("Username, email, and password are required");
   }
 
@@ -51,6 +57,12 @@ export const createUser = async ({ username, email, password }) => {
         username,
         email,
         password: passwordHash,
+        profile: {
+          create: {
+            profilePicture: profilePicture,
+            contactInfo: null,
+          },
+        },
       },
     });
 

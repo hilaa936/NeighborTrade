@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { createUser, getUserByEmail } from "@/lib/user"; // Helper functions for user database interaction
 import prisma from "@/lib/prisma";
 
-const authOptions = {
+export const authOptions = {
   providers: [
     // Credentials Provider (email/password)
     CredentialsProvider({
@@ -30,13 +30,19 @@ const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       // Specify the fields to extract from the Google profile
-      profile(profile) {
-        return {
-          id: profile.sub,
-          username: profile.name,
-          email: profile.email,
-          //image: profile.picture,
-        };
+      async profile(profile) {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: profile.email },
+        });
+        if (existingUser) {
+          return {
+            id: existingUser.id,
+            username: existingUser.username,
+            email: existingUser.email,
+            //image: profile.picture,
+          };
+        }
+        return null;
       },
     }),
   ],
@@ -47,13 +53,13 @@ const authOptions = {
         if (!user) {
           // // Redirect to error page if user is not registered
           // return "/auth/error?error=google_account_not_registered";
-          const newUser = await prisma.user.create({
-            data: {
-              username: profile.name,
-              email: profile.email,
-              password: null, // No password for Google OAuth users
-              role: "user", // Default role for new users
-            },
+          const newUser = await createUser({
+            username: profile.name,
+            email: profile.email,
+            password: "",
+            provider: "Google",
+            profilePicture: profile.picture, // No password for Google OAuth users
+            //to do add provider property
           });
 
           console.log(newUser);
@@ -89,3 +95,4 @@ const authOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+//export default NextAuth(authOptions);

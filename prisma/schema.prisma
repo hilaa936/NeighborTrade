@@ -44,8 +44,7 @@ model User {
 }
 
 model Profile {
-  id             Int      @id @default(autoincrement())
-  userId         Int      @unique
+  userId         Int      @unique @id
   profilePicture String?
   type           ProfileType @default(BEGIN)
   contactInfo    String?

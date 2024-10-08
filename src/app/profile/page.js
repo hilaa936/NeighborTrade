@@ -1,22 +1,120 @@
-// src/app/profile/page.js
-export default function Profile() {
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+
+export default function ProfilePage() {
+  const { data: session, status } = useSession(); // Get user session
+  const router = useRouter();
+  const [profile, setProfile] = useState(null); // Profile data state
+  const [profilePicture, setProfilePicture] = useState(""); // Profile picture URL state
+  const [contactInfo, setContactInfo] = useState(""); // Contact information state
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error message state
+
+  // Fetch profile data when component mounts
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      signIn(); // Redirect to login if user is not authenticated
+      return;
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/profile");
+        const data = await res.json();
+
+        if (res.ok) {
+          setProfile(data);
+          setProfilePicture(data.profilePicture || "");
+          setContactInfo(data.contactInfo || "");
+        } else {
+          setError(data.error || "Error fetching profile");
+        }
+      } catch (err) {
+        setError("Failed to load profile");
+      }
+      setLoading(false);
+    };
+
+    if (session) {
+      fetchProfile();
+    }
+  }, [session, status]);
+
+  // Handle form submission for updating profile
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent form submission from refreshing the page
+    setError(null);
+
+    try {
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          profilePicture,
+          contactInfo,
+        }),
+      });
+
+      if (res.ok) {
+        alert("Profile updated successfully!");
+        router.reload(); // Reload the page to reflect updated profile
+      } else {
+        const data = await res.json();
+        setError(data.error || "Error updating profile");
+      }
+    } catch (err) {
+      setError("Failed to update profile");
+    }
+  };
+
+  if (loading) return <p>Loading...</p>; // Show loading message
+  if (error) return <p className="text-red-500">{error}</p>; // Show error message
+
   return (
-    <section className="p-8">
-      <h2 className="text-3xl font-bold mb-4">Your Profile</h2>
-      <p className="text-lg mb-6">
-        Manage your profile information and produce listings here.
-      </p>
-      {/* Placeholder for profile information */}
-      <div className="border p-4 rounded shadow mb-4">
-        <h3 className="text-xl font-bold">Profile Information</h3>
-        <p>Name: John Doe</p>
-        <p>Email: john@example.com</p>
-        <p>Grower Status: Yes</p>
-      </div>
-      {/* Placeholder for actions */}
-      <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-        Edit Profile
-      </button>
-    </section>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-md shadow-md">
+      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+      <form onSubmit={handleSubmit}>
+        {/* Profile Picture URL Field */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Profile Picture URL
+          </label>
+          <input
+            type="text"
+            value={profilePicture}
+            onChange={(e) => setProfilePicture(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            placeholder="https://example.com/profile.jpg"
+          />
+        </div>
+
+        {/* Contact Information Field */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Contact Information
+          </label>
+          <input
+            type="text"
+            value={contactInfo}
+            onChange={(e) => setContactInfo(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            placeholder="Enter your contact info"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+        >
+          Save Changes
+        </button>
+      </form>
+    </div>
   );
 }
