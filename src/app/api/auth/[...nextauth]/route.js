@@ -29,52 +29,61 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Specify the fields to extract from the Google profile
       async profile(profile) {
         const existingUser = await prisma.user.findUnique({
           where: { email: profile.email },
         });
-        if (existingUser) {
-          return {
-            id: existingUser.id,
-            username: existingUser.username,
-            email: existingUser.email,
-            //image: profile.picture,
-          };
-        }
-        return null;
+        return {
+          id: existingUser.id, // Google user ID
+          name: profile.name,
+          email: profile.email,
+        };
       },
     }),
   ],
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
-        const user = await getUserByEmail(profile.email);
+        const user = await getUserByEmail(profile?.email);
         if (!user) {
-          // // Redirect to error page if user is not registered
-          // return "/auth/error?error=google_account_not_registered";
-          const newUser = await createUser({
-            username: profile.name,
-            email: profile.email,
-            password: "",
-            provider: "Google",
-            profilePicture: profile.picture, // No password for Google OAuth users
-            //to do add provider property
+          // Create a new user if one doesn't exist
+          const newUser = await prisma.user.create({
+            data: {
+              username: profile.name, // Assuming username is the first name
+              email: profile.email,
+              providerId: profile.sub, // Google user ID (sub)
+              provider: account?.provider,
+              profile: {
+                create: {
+                  firstName: profile.given_name,
+                  lastName: profile.family_name,
+                  profilePicture: profile.picture, // Google profile picture
+                },
+              },
+            },
           });
-
-          console.log(newUser);
+          console.log("New Google User Created:", newUser);
         }
       }
-      return true;
+      return true; // Allow sign-in
     },
-    async jwt({ token, user }) {
+    async jwt({ token, account, user }) {
       if (user) {
         token.id = user.id;
         token.username = user.username;
         token.role = user.role;
       }
-      return token;
+      // Include account ID for Google users
+      if (account && account.provider === "google") {
+        const dbUser = await getUserByEmail(token.email);
+        token.id = dbUser.id; // Save the user ID from the database
+        token.username = dbUser.username;
+        token.role = dbUser.role;
+      }
+
+      return token; // Return the updated token
     },
+
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.username = token.username;
@@ -95,4 +104,3 @@ export const authOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-//export default NextAuth(authOptions);

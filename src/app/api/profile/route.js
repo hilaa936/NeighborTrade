@@ -41,8 +41,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   // Get the session for the current request
-  const session = await getServerSession(authOptions);
-
+  const session = await getServerSession({ req: request }, authOptions);
   // If no session exists, return unauthorized
   if (!session) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
