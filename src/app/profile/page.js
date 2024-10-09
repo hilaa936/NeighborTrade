@@ -1,23 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession(); // Get user session
-  const router = useRouter();
-  const [profile, setProfile] = useState(null); // Profile data state
-  const [profilePicture, setProfilePicture] = useState(""); // Profile picture URL state
-  const [contactInfo, setContactInfo] = useState(""); // Contact information state
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error message state
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch profile data when component mounts
   useEffect(() => {
     if (status === "unauthenticated") {
-      signIn(); // Redirect to login if user is not authenticated
-      return;
+      signIn(); // Redirect to login if not authenticated
     }
 
     const fetchProfile = async () => {
@@ -27,13 +22,11 @@ export default function ProfilePage() {
 
         if (res.ok) {
           setProfile(data);
-          setProfilePicture(data.profilePicture || "");
-          setContactInfo(data.contactInfo || "");
         } else {
-          setError(data.error || "Error fetching profile");
+          setError(data.error || "Failed to load profile.");
         }
       } catch (err) {
-        setError("Failed to load profile");
+        setError("Failed to load profile.");
       }
       setLoading(false);
     };
@@ -43,78 +36,82 @@ export default function ProfilePage() {
     }
   }, [session, status]);
 
-  // Handle form submission for updating profile
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form submission from refreshing the page
-    setError(null);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
-    try {
-      const res = await fetch("/api/profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          profilePicture,
-          contactInfo,
-        }),
-      });
-
-      if (res.ok) {
-        alert("Profile updated successfully!");
-        router.reload(); // Reload the page to reflect updated profile
-      } else {
-        const data = await res.json();
-        setError(data.error || "Error updating profile");
-      }
-    } catch (err) {
-      setError("Failed to update profile");
-    }
-  };
-
-  if (loading) return <p>Loading...</p>; // Show loading message
-  if (error) return <p className="text-red-500">{error}</p>; // Show error message
+  // Use the profile picture from session or profile, or fallback to default image
+  const profilePicture =
+    profile?.profilePicture ||
+    session?.user?.image ||
+    "/images/default-profile.jpg"; // Use relative path for public images
+  const fullName =
+    `${profile?.firstName || ""} ${profile?.lastName || ""}`.trim() ||
+    session?.user?.name ||
+    "User";
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-md shadow-md">
-      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-      <form onSubmit={handleSubmit}>
-        {/* Profile Picture URL Field */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Profile Picture URL
-          </label>
-          <input
-            type="text"
-            value={profilePicture}
-            onChange={(e) => setProfilePicture(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-            placeholder="https://example.com/profile.jpg"
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md">
+      <div className="flex flex-col items-center">
+        {/* Profile Picture */}
+        <div className="w-32 h-32 mb-4">
+          <Image
+            src={profilePicture}
+            alt="Profile Picture"
+            className="rounded-full object-cover w-full h-full"
+            width={128}
+            height={128}
           />
         </div>
 
-        {/* Contact Information Field */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Contact Information
-          </label>
-          <input
-            type="text"
-            value={contactInfo}
-            onChange={(e) => setContactInfo(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-            placeholder="Enter your contact info"
-          />
+        {/* Full Name */}
+        <h1 className="text-2xl font-semibold">{fullName}</h1>
+
+        {/* Bio */}
+        {profile?.bio ? (
+          <p className="text-gray-600 mt-2">{profile.bio}</p>
+        ) : (
+          <p className="text-gray-400 mt-2">No bio available</p>
+        )}
+
+        {/* Location, Website, and Other Details */}
+        <div className="mt-4">
+          {profile?.location && (
+            <p className="text-gray-600">
+              <strong>Location:</strong> {profile.location}
+            </p>
+          )}
+          {profile?.website && (
+            <p className="text-blue-500">
+              <strong>Website:</strong>{" "}
+              <a
+                href={profile.website}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {profile.website}
+              </a>
+            </p>
+          )}
+          {profile?.phoneNumber && (
+            <p className="text-gray-600">
+              <strong>Phone:</strong> {profile.phoneNumber}
+            </p>
+          )}
+          {profile?.birthdate && (
+            <p className="text-gray-600">
+              <strong>Birthdate:</strong>{" "}
+              {new Date(profile.birthdate).toLocaleDateString()}
+            </p>
+          )}
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-        >
-          Save Changes
-        </button>
-      </form>
+        {/* Edit Profile Button */}
+        <div className="mt-6">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            Edit Profile
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

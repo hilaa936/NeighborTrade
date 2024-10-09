@@ -60,7 +60,6 @@ export const createUser = async ({
         profile: {
           create: {
             profilePicture: profilePicture,
-            contactInfo: null,
           },
         },
       },

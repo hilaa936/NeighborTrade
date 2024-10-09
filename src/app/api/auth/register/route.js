@@ -27,7 +27,7 @@ export async function POST(request) {
     const newUser = await createUser({
       username: name,
       email: email,
-      password: hashedPassword, // Store the hashed password
+      password: password, // Store the hashed password
     });
 
     // Respond with success

@@ -187,3 +187,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [NextAuth](https://next-auth.js.org/)
 - [Prisma](https://www.prisma.io/)
 - [PostgreSQL](https://www.postgresql.org/)
+
+### Check Your Database
+
+Optionally, you can check your database schema using Prisma Studio:
+run on terminal `npx prisma studio`
+This will open up Prisma Studio in your browser, where you can visually inspect your updated database structure, create test records, and manage your data

@@ -10,7 +10,8 @@ generator client {
 }
 
 //enums
-enum Role {
+enum RoleTypes {
+  USER
   GROWER
   BUYER
   ADMIN
@@ -20,69 +21,98 @@ enum TradeStatus {
   ACCEPTED
   REJECTED
 }
-enum ProfileType {
-  BEGIN
-  MEDIUM
-  PRO
-}
-model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  name   String?   
-  email      String   @unique
-  password   String?  // Set as optional for Google OAuth users
-  role         String   @default("user")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  
-  profile    Profile? // One-to-one relation to Profile
-  produce          Produce[]
-  tradeProposals   Trade[]   @relation("proposer")
-  tradeRequests    Trade[]   @relation("receiver")
 
+
+model User {
+  id              String    @id @default(uuid())                  // Unique identifier (UUID)
+  username        String    @unique                               // Username must be unique
+  email           String    @unique                               // Email must be unique
+  password        String?                                     
+  role            RoleTypes @default(USER)                        // User role for RBAC
+  isActive        Boolean   @default(true)                        // Account active by default
+  createdAt       DateTime  @default(now())                       // Account creation timestamp
+  updatedAt       DateTime  @updatedAt                            // Auto-updated timestamp
+  lastLogin       DateTime?                                       // Last login timestamp
+  lastLoginIp     String?                                         // Last login IP address
+  lastLoginUserAgent String?                                      // Last login user agent
+  emailVerified   Boolean?                                        // Email verification status
+  provider        String?                                         // OAuth provider
+  providerId      String?                                         // OAuth provider ID
+  lastActivity    DateTime?                                       // Last activity timestamp
+  deletedAt       DateTime?                                        // Soft delete timestamp  
+  
+  profile         Profile?                                        // One-to-one relation with Profile
+  profileId Int?
+                             
+  produce   Produce[]                                // One-to-many relation with Produce (if user is a grower)
+  proposedTrades Trade[] @relation("proposedTrades") 
+  receivedTrades Trade[] @relation("receivedTrades")
+
+  @@index([email])
+  @@index([createdAt])
   @@map("users")
 }
 
 model Profile {
-  userId         Int      @unique @id
-  profilePicture String?
-  type           ProfileType @default(BEGIN)
-  contactInfo    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String    @id @default(uuid())                  // Unique identifier (UUID)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)  
+  userId          String    @unique                               // Foreign key for User
+  profilePicture  String?                                         // Profile picture URL or path
+  firstName       String?                                         // First name
+  lastName        String?                                         // Last name
+  bio             String?                                         // Bio or description
+  phoneNumber     String?                                         // Phone number
+  location        String?                                         // Location
+  website         String?                                         // Website URL
+  birthdate       DateTime?                                       // Birthdate
+  createdAt       DateTime  @default(now())                       // Profile creation timestamp
+  updatedAt       DateTime  @updatedAt                            // Auto-updated timestamp
 
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("profiles")
 }
 
+// Grower's produce listing
 model Produce {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  quantity    Int
-  isDisabled  Boolean   @default(false)
-  createdAt   DateTime  @default(now())
+  id          Int      @id @default(autoincrement())   // Unique identifier for produce
+  grower      User     @relation(fields: [growerId], references: [id]) // Foreign key to User (grower)
+  growerId    String                                 // Grower (user) foreign key
+  name        String                                 // Name of the produce
+  description String?                                // Optional description of the produce
+  quantity    Int                                    // Quantity available for trade
+  available   Boolean   @default(true)               // Is the produce available for trade?
+  createdAt   DateTime  @default(now())              // Produce listing creation timestamp
+  updatedAt   DateTime  @updatedAt                   // Auto-updated timestamp
+  tradeProduce TradeProduce[]                        // Many-to-many relation with TradeProduce
 
-  growerId    Int
-  grower      User      @relation(fields: [growerId], references: [id], onDelete: Cascade)
-
-  tradesProposed Trade[] @relation("proposedItem")
-  tradesRequested Trade[] @relation("requestedItem")
+  @@map("produce")                                    // Optional: Maps to "produce" table
 }
 
+// Trade between two users involving produce
 model Trade {
-  id               Int         @id @default(autoincrement())
-  status           TradeStatus @default(PENDING)
-  createdAt        DateTime    @default(now())
+  id          Int      @id @default(autoincrement())  // Unique identifier for trade
+  proposerId  String   // User initiating the trade
+  proposer    User     @relation("proposedTrades", fields: [proposerId], references: [id]) // Initiating user
+  responderId String   // User responding to the trade
+  responder   User     @relation("receivedTrades", fields: [responderId], references: [id]) // Responding user
 
-  proposerId       Int
-  proposer         User        @relation("proposer", fields: [proposerId], references: [id])
+  tradeProduce TradeProduce[]                        // Produce involved in the trade
 
-  receiverId       Int
-  receiver         User        @relation("receiver", fields: [receiverId], references: [id])
+  status      String   @default("pending")            // Status of trade (e.g., pending, completed, canceled)
+  createdAt   DateTime @default(now())                // Trade creation timestamp
+  updatedAt   DateTime @updatedAt                     // Auto-updated timestamp
 
-  proposedItemId   Int
-  proposedItem     Produce     @relation("proposedItem", fields: [proposedItemId], references: [id])
+  @@map("trades")                                     // Optional: Maps to "trades" table
+}
 
-  requestedItemId  Int
-  requestedItem    Produce     @relation("requestedItem", fields: [requestedItemId], references: [id])
+
+// Many-to-many relationship between trades and produce
+model TradeProduce {
+  id          Int      @id @default(autoincrement())  // Unique identifier for the trade-produce relation
+  tradeId     Int                                    // Foreign key to the trade
+  trade       Trade    @relation(fields: [tradeId], references: [id], onDelete: Cascade) // Relation to the Trade
+  produceId   Int                                    // Foreign key to the produce item
+  produce     Produce  @relation(fields: [produceId], references: [id], onDelete: Cascade) // Relation to Produce
+
+  quantity    Int                                    // Quantity of produce being traded
+  proposer    Boolean                                // True if offered by proposer, false if by responder
 }
