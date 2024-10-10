@@ -1,6 +1,12 @@
 // services/produceService.js
 import axios from "axios";
 
+export const fetchAllProduce = async () => {
+  const url = "/api/produce";
+  const response = await axios.get(url);
+  return response.data;
+};
+/// traders functionality
 export const fetchTraderProduce = async (traderId) => {
   const url = `/api/produce?traderId=${traderId}`;
   const response = await axios.get(url);

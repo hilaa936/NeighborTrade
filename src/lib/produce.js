@@ -8,9 +8,19 @@ export const createProduce = async (data) => {
 };
 
 export const getAllAvailableProduce = async () => {
-  return await prisma.produce.findMany({
+  const allProduce = await prisma.produce.findMany({
     where: { available: true },
+    include: {
+      trader: {
+        // Assuming "trader" is the relation field to the User model
+        select: {
+          username: true,
+          // profilePicture: true, // Assuming trader profile has a picture
+        },
+      },
+    },
   });
+  return allProduce;
 };
 
 export const getProducesByTrader = async (traderId) => {

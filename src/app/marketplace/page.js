@@ -1,42 +1,41 @@
-// src/app/marketplace/page.js
-import { formatDate } from "../../utils/formatDate";
+"use client";
 
-export default function Marketplace() {
-  const sampleProduce = [
-    {
-      id: 1,
-      name: "Tomatoes",
-      description: "Fresh tomatoes",
-      createdAt: "2024-10-07",
-    },
-    {
-      id: 2,
-      name: "Carrots",
-      description: "Organic carrots",
-      createdAt: "2024-10-05",
-    },
-    {
-      id: 3,
-      name: "Kale",
-      description: "Locally grown kale",
-      createdAt: "2024-10-03",
-    },
-  ];
+import { useEffect, useState } from "react";
+import MarketplaceList from "@/components/MarketplaceList";
+import { fetchAllProduce } from "@/services/produceService"; // Use the fetchAll function to get all produce
+
+export default function MarketplacePage() {
+  const [produces, setProduces] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state for fetching data
+
+  useEffect(() => {
+    // Fetch all produce when the page loads
+    const loadAllProduce = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchAllProduce(); // Fetch all produce from the service
+        setProduces(data); // Set the fetched produce data to the state
+      } catch (error) {
+        console.error("Error fetching produce:", error);
+      } finally {
+        setLoading(false); // Stop the loading state
+      }
+    };
+    loadAllProduce();
+  }, []);
+
+  if (loading) {
+    return <p>Loading marketplace items...</p>; // Display loading message while data is being fetched
+  }
 
   return (
-    <section className="p-8">
-      <h2 className="text-3xl font-bold mb-4">Marketplace</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {sampleProduce.map((produce) => (
-          <div key={produce.id} className="border p-4 rounded shadow">
-            <h3 className="text-xl font-bold">{produce.name}</h3>
-            <p>{produce.description}</p>
-            <p className="text-sm text-gray-500">
-              Listed on: {formatDate(produce.createdAt)}
-            </p>
-          </div>
-        ))}
-      </div>
-    </section>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Marketplace</h1>
+      {produces.length > 0 ? (
+        <MarketplaceList produces={produces} />
+      ) : (
+        <p>No produce available in the marketplace.</p>
+      )}
+    </div>
   );
 }

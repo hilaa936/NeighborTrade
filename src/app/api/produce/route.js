@@ -38,31 +38,26 @@ export async function POST(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
+// GET /api/produce: Fetch all produce with trader information
 // GET /api/produce?traderId=<traderId>: Fetch all produce by trader
 export async function GET(req) {
   try {
-    let produce = [];
     const { searchParams } = new URL(req.url);
     const traderId = searchParams.get("traderId");
     // Get the logged-in user's session
     const session = await getServerSession(authOptions);
 
     if (!traderId) {
-      produce = await getAllAvailableProduce();
-      // return NextResponse.json(
-      //   { error: "Missing traderId parameter" },
-      //   { status: 400 }
-      // );
+      const allProduce = await getAllAvailableProduce();
+      return NextResponse.json(allProduce, { status: 200 });
     } else {
       // If there is no session, return 401 Unauthorized
       if (!session || session.user.id !== traderId) {
         return getProducesByTrader(traderId);
       }
-      produce = await getAllTraderProduce(traderId);
+      const produce = await getAllTraderProduce(traderId);
+      return NextResponse.json(produce, { status: 200 });
     }
-
-    return NextResponse.json(produce, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
