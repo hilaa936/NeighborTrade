@@ -1,69 +1,31 @@
-/*
-  Warnings:
-
-  - The primary key for the `users` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `name` on the `users` table. All the data in the column will be lost.
-  - The `role` column on the `users` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - You are about to drop the `Produce` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Profile` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Trade` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
-CREATE TYPE "RoleTypes" AS ENUM ('USER', 'GROWER', 'BUYER', 'ADMIN');
+CREATE TYPE "RoleTypes" AS ENUM ('USER', 'TRADER', 'BUYER', 'ADMIN');
 
--- DropForeignKey
-ALTER TABLE "Produce" DROP CONSTRAINT "Produce_growerId_fkey";
+-- CreateEnum
+CREATE TYPE "TradeStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
 
--- DropForeignKey
-ALTER TABLE "Profile" DROP CONSTRAINT "Profile_userId_fkey";
+-- CreateTable
+CREATE TABLE "users" (
+    "id" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT,
+    "role" "RoleTypes" NOT NULL DEFAULT 'USER',
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "lastLogin" TIMESTAMP(3),
+    "lastLoginIp" TEXT,
+    "lastLoginUserAgent" TEXT,
+    "emailVerified" BOOLEAN,
+    "provider" TEXT,
+    "providerId" TEXT,
+    "lastActivity" TIMESTAMP(3),
+    "deletedAt" TIMESTAMP(3),
+    "profileId" INTEGER,
 
--- DropForeignKey
-ALTER TABLE "Trade" DROP CONSTRAINT "Trade_proposedItemId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Trade" DROP CONSTRAINT "Trade_proposerId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Trade" DROP CONSTRAINT "Trade_receiverId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Trade" DROP CONSTRAINT "Trade_requestedItemId_fkey";
-
--- AlterTable
-ALTER TABLE "users" DROP CONSTRAINT "users_pkey",
-DROP COLUMN "name",
-ADD COLUMN     "deletedAt" TIMESTAMP(3),
-ADD COLUMN     "emailVerified" BOOLEAN,
-ADD COLUMN     "isActive" BOOLEAN NOT NULL DEFAULT true,
-ADD COLUMN     "lastActivity" TIMESTAMP(3),
-ADD COLUMN     "lastLogin" TIMESTAMP(3),
-ADD COLUMN     "lastLoginIp" TEXT,
-ADD COLUMN     "lastLoginUserAgent" TEXT,
-ADD COLUMN     "profileId" INTEGER,
-ADD COLUMN     "provider" TEXT,
-ADD COLUMN     "providerId" TEXT,
-ALTER COLUMN "id" DROP DEFAULT,
-ALTER COLUMN "id" SET DATA TYPE TEXT,
-DROP COLUMN "role",
-ADD COLUMN     "role" "RoleTypes" NOT NULL DEFAULT 'USER',
-ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
-DROP SEQUENCE "users_id_seq";
-
--- DropTable
-DROP TABLE "Produce";
-
--- DropTable
-DROP TABLE "Profile";
-
--- DropTable
-DROP TABLE "Trade";
-
--- DropEnum
-DROP TYPE "ProfileType";
-
--- DropEnum
-DROP TYPE "Role";
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "profiles" (
@@ -86,7 +48,7 @@ CREATE TABLE "profiles" (
 -- CreateTable
 CREATE TABLE "produce" (
     "id" SERIAL NOT NULL,
-    "growerId" TEXT NOT NULL,
+    "traderId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "quantity" INTEGER NOT NULL,
@@ -121,7 +83,10 @@ CREATE TABLE "TradeProduce" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "profiles_userId_key" ON "profiles"("userId");
+CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE INDEX "users_email_idx" ON "users"("email");
@@ -129,11 +94,14 @@ CREATE INDEX "users_email_idx" ON "users"("email");
 -- CreateIndex
 CREATE INDEX "users_createdAt_idx" ON "users"("createdAt");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "profiles_userId_key" ON "profiles"("userId");
+
 -- AddForeignKey
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "produce" ADD CONSTRAINT "produce_growerId_fkey" FOREIGN KEY ("growerId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "produce" ADD CONSTRAINT "produce_traderId_fkey" FOREIGN KEY ("traderId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "trades" ADD CONSTRAINT "trades_proposerId_fkey" FOREIGN KEY ("proposerId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,3 +1,6 @@
+import MarketSection from "@/components/MarketSection";
+import TraderSection from "@/components/TraderSection";
+
 export default function Home() {
   return (
     <section className="p-8">
@@ -8,12 +11,9 @@ export default function Home() {
         A community-driven platform for trading homegrown fruits, vegetables,
         and plants.
       </p>
-      <a
-        href="/marketplace"
-        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-      >
-        Visit the Marketplace
-      </a>
+
+      <MarketSection />
+      <TraderSection />
     </section>
   );
 }

@@ -29,25 +29,17 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      async profile(profile) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: profile.email },
-        });
-        return {
-          id: existingUser.id, // Google user ID
-          name: profile.name,
-          email: profile.email,
-        };
-      },
+      // Profile callback is unnecessary; Google already provides needed information
     }),
   ],
   callbacks: {
-    async signIn({ account, profile }) {
+    // Handle sign-in for both Credentials and Google sign-ins
+    async signIn({ account, profile, user }) {
       if (account?.provider === "google") {
-        const user = await getUserByEmail(profile?.email);
+        let user = await getUserByEmail(profile?.email);
         if (!user) {
           // Create a new user if one doesn't exist
-          const newUser = await prisma.user.create({
+          user = await prisma.user.create({
             data: {
               username: profile.name, // Assuming username is the first name
               email: profile.email,
@@ -62,23 +54,27 @@ export const authOptions = {
               },
             },
           });
-          console.log("New Google User Created:", newUser);
+          console.log("New Google User Created:", user);
         }
       }
       return true; // Allow sign-in
     },
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, profile }) {
       if (user) {
         token.id = user.id;
+        token.email = user.email;
         token.username = user.username;
         token.role = user.role;
       }
       // Include account ID for Google users
-      if (account && account.provider === "google") {
+      if (account?.provider === "google") {
         const dbUser = await getUserByEmail(token.email);
-        token.id = dbUser.id; // Save the user ID from the database
-        token.username = dbUser.username;
-        token.role = dbUser.role;
+
+        if (dbUser) {
+          token.id = dbUser.id; // Store the user ID
+          token.username = dbUser.username;
+          token.role = dbUser.role;
+        }
       }
 
       return token; // Return the updated token
@@ -86,6 +82,7 @@ export const authOptions = {
 
     async session({ session, token }) {
       session.user.id = token.id;
+      session.user.email = token.email;
       session.user.username = token.username;
       session.user.role = token.role;
       return session;

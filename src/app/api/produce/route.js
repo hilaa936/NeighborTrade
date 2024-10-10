@@ -1,38 +1,69 @@
-// src/app/api/produce/route.js
+// app/api/produce/route.js
+import { NextResponse } from "next/server";
+import {
+  createProduce,
+  getAllAvailableProduce,
+  getProducesByTrader,
+  getAllTraderProduce,
+} from "@/lib/produce";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Import your NextAuth configuration
+import { getServerSession } from "next-auth"; // For session handling
 
-import prisma from "@/lib/prisma";
-
-export async function POST(request) {
-  const data = await request.json();
-
+// POST /api/produce: Add new produce
+export async function POST(req) {
   try {
-    const produce = await createProduce({
-      growerId: data.growerId,
-      name: data.name,
-      description: data.description,
-      quantity: data.quantity,
-      isDisabled: data.isDisabled,
+    const body = await req.json();
+    const { name, description, quantity, traderId } = body;
+    const session = await getServerSession(authOptions);
+    //validate authorize
+    if (!session?.user?.id || traderId != session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+    //validate fields
+    if (!name || !quantity || !traderId) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const newProduce = await createProduce({
+      name,
+      description,
+      quantity,
+      traderId,
     });
-    return new Response(JSON.stringify(produce), { status: 201 });
+    return NextResponse.json(newProduce, { status: 201 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Produce creation failed" }), {
-      status: 500,
-    });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function GET() {
+// GET /api/produce?traderId=<traderId>: Fetch all produce by trader
+export async function GET(req) {
   try {
-    const produceList = await prisma.produce.findMany({
-      where: {
-        isDisabled: false,
-        quantity: { gt: 0 },
-      },
-    });
-    return new Response(JSON.stringify(produceList), { status: 200 });
+    let produce = [];
+    const { searchParams } = new URL(req.url);
+    const traderId = searchParams.get("traderId");
+    // Get the logged-in user's session
+    const session = await getServerSession(authOptions);
+
+    if (!traderId) {
+      produce = await getAllAvailableProduce();
+      // return NextResponse.json(
+      //   { error: "Missing traderId parameter" },
+      //   { status: 400 }
+      // );
+    } else {
+      // If there is no session, return 401 Unauthorized
+      if (!session || session.user.id !== traderId) {
+        return getProducesByTrader(traderId);
+      }
+      produce = await getAllTraderProduce(traderId);
+    }
+
+    return NextResponse.json(produce, { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to fetch produce" }), {
-      status: 500,
-    });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

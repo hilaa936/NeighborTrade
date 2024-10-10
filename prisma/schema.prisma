@@ -12,7 +12,7 @@ generator client {
 //enums
 enum RoleTypes {
   USER
-  GROWER
+  TRADER
   BUYER
   ADMIN
 }
@@ -44,7 +44,7 @@ model User {
   profile         Profile?                                        // One-to-one relation with Profile
   profileId Int?
                              
-  produce   Produce[]                                // One-to-many relation with Produce (if user is a grower)
+  produce   Produce[]                                // One-to-many relation with Produce (if user is a trader)
   proposedTrades Trade[] @relation("proposedTrades") 
   receivedTrades Trade[] @relation("receivedTrades")
 
@@ -71,11 +71,11 @@ model Profile {
   @@map("profiles")
 }
 
-// Grower's produce listing
+// trader's produce listing
 model Produce {
   id          Int      @id @default(autoincrement())   // Unique identifier for produce
-  grower      User     @relation(fields: [growerId], references: [id]) // Foreign key to User (grower)
-  growerId    String                                 // Grower (user) foreign key
+  trader      User     @relation(fields: [traderId], references: [id]) // Foreign key to User (trader)
+  traderId    String                                 // trader (user) foreign key
   name        String                                 // Name of the produce
   description String?                                // Optional description of the produce
   quantity    Int                                    // Quantity available for trade

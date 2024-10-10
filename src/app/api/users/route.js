@@ -10,7 +10,7 @@ export async function POST(request) {
     // Basic validation for required fields
     if (!data.email || !data.username || !data.password) {
       return NextResponse.json(
-        { error: "Name, email, and password are required" },
+        { error: "username, email, and password are required" },
         { status: 400 }
       );
     }
