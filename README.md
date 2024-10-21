@@ -30,6 +30,9 @@ A community-driven platform for individuals who grow edible plants, fruits, and 
 - [PostgreSQL](https://www.postgresql.org/) database instance
 - [Git](https://git-scm.com/) for version control
 
+- Run Postgres Server on Terminal :
+  - macOS: `brew services start postgresql`
+
 ### Getting Started
 
 1. **Clone the Repository**
@@ -71,50 +74,50 @@ A community-driven platform for individuals who grow edible plants, fruits, and 
    ```
    - The app will be available at `http://localhost:3000`.
 6. **Set Up a Google OAuth 2.0 Client in Google Developer Console**
+   steps
 
-### Set Up a Google OAuth 2.0 Client in Google Developer Console
+   1. Go to the [Google Developer Console](https://console.developers.google.com/).
 
-1. Go to the [Google Developer Console](https://console.developers.google.com/).
+   2. **Create a new project** (or select an existing project).
 
-2. **Create a new project** (or select an existing project).
+      - Click on the project dropdown (top of the page) and select "New Project."
 
-   - Click on the project dropdown (top of the page) and select "New Project."
+   3. **Enable OAuth Consent Screen:**
 
-3. **Enable OAuth Consent Screen:**
+      - In the left sidebar, navigate to `API's and Services` **"OAuth consent screen."**
+      - Choose **"External"** if the app is for public use.
+      - Fill out the required fields:
+      - **App name**
+      - **User support email**
+      - **Developer contact information**
+      - Click **Save and Continue.**
 
-   - In the left sidebar, navigate to `API's and Services` **"OAuth consent screen."**
-   - Choose **"External"** if the app is for public use.
-   - Fill out the required fields:
-     - **App name**
-     - **User support email**
-     - **Developer contact information**
-   - Click **Save and Continue.**
+   4. **Create OAuth 2.0 Credentials:**
 
-4. **Create OAuth 2.0 Credentials:**
+      - In the left sidebar, go to **"Credentials."**
+      - Click **"Create credentials"** and choose **"OAuth client ID."**
+      - Select **"Web application"** as the application type.
+      - Set a name for the OAuth client (e.g., "Next.js OAuth").
+      - **Add authorized redirect URIs:**
+      - For local development, add: `http://localhost:3000/api/auth/callback/google`
+      - For production, add the production URL (e.g., `https://yourdomain.com/api/auth/callback/google`)
+      - Click **Create.**
 
-   - In the left sidebar, go to **"Credentials."**
-   - Click **"Create credentials"** and choose **"OAuth client ID."**
-   - Select **"Web application"** as the application type.
-   - Set a name for the OAuth client (e.g., "Next.js OAuth").
-   - **Add authorized redirect URIs:**
-     - For local development, add: `http://localhost:3000/api/auth/callback/google`
-     - For production, add the production URL (e.g., `https://yourdomain.com/api/auth/callback/google`)
-   - Click **Create.**
+   5. **Copy the Client ID and Client Secret:**
 
-5. **Copy the Client ID and Client Secret:**
-   - After creating the OAuth client, you'll see a dialog with the **Client ID** and **Client Secret.**
-   - Copy these values as you'll need them for your environment variables.
+      - After creating the OAuth client, you'll see a dialog with the **Client ID** and **Client Secret.**
+      - Copy these values as you'll need them for your environment variables.
 
-### Step 2: Set Up Environment Variables in Next.js
+   6. **Set Up Environment Variables in Next.js**
 
-Add the following environment variables to the `.env` file:
+      Add the following environment variables to the `.env` file:
 
-```env
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-NEXTAUTH_SECRET=your-random-secret-string
-NEXTAUTH_URL=http://localhost:3000
-```
+      ```env
+      GOOGLE_CLIENT_ID=your-google-client-id
+      GOOGLE_CLIENT_SECRET=your-google-client-secret
+      NEXTAUTH_SECRET=your-random-secret-string
+      NEXTAUTH_URL=http://localhost:3000
+      ```
 
 ## Project Structure
 

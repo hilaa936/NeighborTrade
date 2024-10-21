@@ -79,7 +79,7 @@ model Produce {
   name        String                                 // Name of the produce
   description String?                                // Optional description of the produce
   quantity    Int                                    // Quantity available for trade
-  available   Boolean   @default(true)               // Is the produce available for trade?
+  isAvailable   Boolean   @default(true)               // Is the produce available for trade?
   createdAt   DateTime  @default(now())              // Produce listing creation timestamp
   updatedAt   DateTime  @updatedAt                   // Auto-updated timestamp
   tradeProduce TradeProduce[]                        // Many-to-many relation with TradeProduce

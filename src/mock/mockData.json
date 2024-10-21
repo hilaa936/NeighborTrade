@@ -1,0 +1,120 @@
+{
+  "users": [
+    {
+      "id": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "username": "john_doe",
+      "email": "john@example.com",
+      "password": "hashedpassword123",
+      "role": "TRADER",
+      "isActive": true,
+      "createdAt": "2024-10-15T10:00:00.000Z",
+      "updatedAt": "2024-10-15T10:05:00.000Z",
+      "lastLogin": "2024-10-15T10:00:00.000Z",
+      "lastLoginIp": "192.168.0.1",
+      "lastLoginUserAgent": "Mozilla/5.0",
+      "emailVerified": true,
+      "provider": "google",
+      "providerId": "123456789",
+      "lastActivity": "2024-10-15T10:05:00.000Z",
+      "deletedAt": null,
+      "profileId": 1
+    },
+    {
+      "id": "2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7",
+      "username": "jane_smith",
+      "email": "jane@example.com",
+      "password": null,
+      "role": "BUYER",
+      "isActive": true,
+      "createdAt": "2024-10-14T09:30:00.000Z",
+      "updatedAt": "2024-10-14T09:35:00.000Z",
+      "lastLogin": "2024-10-14T09:30:00.000Z",
+      "lastLoginIp": "192.168.0.2",
+      "lastLoginUserAgent": "Mozilla/5.0",
+      "emailVerified": false,
+      "provider": null,
+      "providerId": null,
+      "lastActivity": "2024-10-14T09:35:00.000Z",
+      "deletedAt": null,
+      "profileId": 2
+    }
+  ],
+  "profiles": [
+    {
+      "id": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p7",
+      "userId": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "profilePicture": "neighbor_trade/public/default.jpg",
+      "firstName": "John",
+      "lastName": "Doe",
+      "bio": "Passionate about gardening and trading homegrown produce.",
+      "phoneNumber": "123-456-7890",
+      "location": "New York, USA",
+      "website": "https://johnsgarden.com",
+      "birthdate": "1990-05-12T00:00:00.000Z",
+      "createdAt": "2024-10-15T10:00:00.000Z",
+      "updatedAt": "2024-10-15T10:05:00.000Z"
+    },
+    {
+      "id": "2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q8",
+      "userId": "2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7",
+      "profilePicture": "neighbor_trade/public/default.jpg",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "bio": "A buyer interested in organic and local produce.",
+      "phoneNumber": "987-654-3210",
+      "location": "Los Angeles, USA",
+      "website": null,
+      "birthdate": "1985-07-19T00:00:00.000Z",
+      "createdAt": "2024-10-14T09:30:00.000Z",
+      "updatedAt": "2024-10-14T09:35:00.000Z"
+    }
+  ],
+  "produce": [
+    {
+      "id": 1,
+      "traderId": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "name": "Organic Tomatoes Fresh",
+      "description": "Freshly picked, organic tomatoes.",
+      "quantity": 10,
+      "produceStatus": "available",
+      "createdAt": "2024-10-15T10:00:00.000Z",
+      "updatedAt": "2024-10-15T10:05:00.000Z"
+    },
+    {
+      "id": 2,
+      "traderId": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "name": "Zucchini",
+      "description": "Homegrown zucchini ready for trade.",
+      "quantity": 20,
+      "produceStatus": "available",
+      "createdAt": "2024-10-15T10:00:00.000Z",
+      "updatedAt": "2024-10-15T10:05:00.000Z"
+    }
+  ],
+  "trades": [
+    {
+      "id": 1,
+      "proposerId": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "responderId": "2b3c4d5e-6f7g-8h9i-0j1k-l2m3n4o5p6q7",
+      "status": "PENDING",
+      "createdAt": "2024-10-15T10:00:00.000Z",
+      "updatedAt": "2024-10-15T10:05:00.000Z"
+    }
+  ],
+  "tradeProduce": [
+    {
+      "id": 1,
+      "tradeId": 1,
+      "produceId": 1,
+      "quantity": 5,
+      "proposer": true
+    },
+    {
+      "id": 2,
+      "tradeId": 1,
+      "produceId": 2,
+      "quantity": 3,
+      "proposer": false
+    }
+  ]
+}

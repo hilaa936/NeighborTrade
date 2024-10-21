@@ -26,13 +26,13 @@ export default function ProducesList({ produces, onEdit, onDelete }) {
           <div
             key={produce?.id}
             className={`p-4 rounded-lg shadow-md relative ${
-              !produce?.available ? "bg-gray-300" : "bg-white"
+              !produce?.isAvailable ? "bg-gray-300" : "bg-white"
             }`} // Gray background if unavailable
           >
             <div className="flex justify-between">
               <h2 className="text-lg font-bold">{produce?.name}</h2>
               <div className="space-x-2">
-                {produce?.available ? (
+                {produce?.isAvailable ? (
                   <>
                     <button
                       onClick={() => onEdit(produce)} // Open form for editing
