@@ -20,9 +20,7 @@ export default function MarketplaceList({ produces }) {
           <div className="mt-4">
             <span>Quantity: {produce.quantity}</span>
           </div>
-          <p className="text-green-500 mt-2">
-            {produce.isAvailable ? "Available" : "Unavailable"}
-          </p>
+          <p className="text-green-500 mt-2">{produce.trader.username}</p>
 
           {/* Trade Button */}
           <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
