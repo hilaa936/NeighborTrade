@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import ProduceForm from "@/components/ProduceForm";
-import ProducesList from "@/components/ProducesList";
+import ProducesList from "@/app/tradingMarket/components/ProducesList";
 import {
   fetchTraderProduce,
   addNewProduce,
@@ -10,6 +9,7 @@ import {
   deleteProduce,
 } from "@/services/produceService"; // Import the services
 import { useSession } from "next-auth/react"; // Import useSession from NextAuth
+import ProduceForm from "../components/ProduceForm";
 
 export default function ProduceManagementPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);

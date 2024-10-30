@@ -11,7 +11,7 @@ export const createProduce = async (data) => {
 export const getAllAvailableProduce = async () => {
   try {
     const allProduce = await prisma.produce.findMany({
-      where: { available: true },
+      where: { isAvailable: true },
       include: {
         trader: {
           // Assuming "trader" is the relation field to the User model
@@ -42,7 +42,7 @@ export const getProducesByTrader = async (traderId) => {
   return await prisma.produce.findMany({
     where: {
       traderId,
-      available: true,
+      isAvailable: true,
     },
   });
 };
@@ -50,6 +50,9 @@ export const getAllTraderProduce = async (traderId) => {
   return await prisma.produce.findMany({
     where: {
       traderId,
+    },
+    orderBy: {
+      isAvailable: "desc", // Shows available items (true) first
     },
   });
 };
@@ -77,7 +80,7 @@ export const deleteProduce = async (id) => {
       id: parseInt(id, 10),
     },
     data: {
-      available: false, // Soft delete by disabling produce
+      isAvailable: false, // Soft delete by disabling produce
     },
   });
 };

@@ -12,7 +12,7 @@ export default function TraderSection() {
       </p>
 
       <Link
-        href="/produce"
+        href="/tradingMarket/produce"
         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
       >
         Manage Your Produce Inventory

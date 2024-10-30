@@ -57,7 +57,12 @@ export default function Navbar() {
             >
               Profile
             </Link>
-
+            <Link
+              className="text-gray-300 hover:text-white transition-all mr-4"
+              href="/travel/tripPreferences"
+            >
+              Travel
+            </Link>
             <button
               onClick={handleLogout}
               className="bg-red-600 px-4 py-2 rounded-md hover:bg-red-700"

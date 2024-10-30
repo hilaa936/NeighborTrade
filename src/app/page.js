@@ -1,5 +1,5 @@
-import MarketSection from "@/components/MarketSection";
-import TraderSection from "@/components/TraderSection";
+import MarketSection from "@/app/tradingMarket/components/MarketSection";
+import TraderSection from "@/app/tradingMarket/components/TraderSection";
 
 export default function Home() {
   return (

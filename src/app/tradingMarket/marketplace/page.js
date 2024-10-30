@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MarketplaceList from "@/components/marketplace/MarketplaceList";
 import { fetchAllProduce } from "@/services/produceService"; // Use the fetchAll function to get all produce
-import SearchBar from "@/components/marketplace/SearchBar";
+import SearchBar from "@/app/tradingMarket/components/marketplace/SearchBar";
+import MarketplaceList from "../components/marketplace/MarketplaceList";
 const produceList = [
   {
     id: 1,
