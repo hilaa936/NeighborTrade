@@ -22,7 +22,7 @@ export default function TripPreferencesPage() {
       localStorage.setItem("preferencesData", JSON.stringify(preferences));
 
       // Navigate to the itinerary page
-      router.push("/travel/itinerary");
+      //router.push("/travel/itinerary");
     } else {
       console.error("Error generating itinerary");
     }

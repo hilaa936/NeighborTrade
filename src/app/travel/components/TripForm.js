@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import DateDifference from "./DateDifference";
 import { getDateDifference } from "@/utils/formatDate";
 
 const DESTINATIONS = [
@@ -16,7 +15,6 @@ const DESTINATIONS = [
 ];
 
 export default function TripForm({ onSubmit }) {
-  // Set today's date as the default start & end date
   const today = new Date().toISOString().split("T")[0];
 
   const [formData, setFormData] = useState({
@@ -25,11 +23,22 @@ export default function TripForm({ onSubmit }) {
     endDate: today,
     interests: [],
     pace: "moderate",
+    budget: "mid-range",
+    style: "cultural",
+    season: "spring",
+    days: 1, // calculated from start and end dates
   });
   const [filteredDestinations, setFilteredDestinations] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Function to handle input changes
+  useEffect(() => {
+    const daysDifference = getDateDifference(
+      formData.startDate,
+      formData.endDate
+    );
+    setFormData((prev) => ({ ...prev, days: daysDifference }));
+  }, [formData.startDate, formData.endDate]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -55,7 +64,7 @@ export default function TripForm({ onSubmit }) {
       setFormData((prev) => ({
         ...prev,
         startDate: value,
-        endDate: value > prev.endDate ? value : prev.endDate, // Update end date if start date is later
+        endDate: value > prev.endDate ? value : prev.endDate,
       }));
     } else if (name === "endDate") {
       setFormData((prev) => ({ ...prev, endDate: value }));
@@ -64,13 +73,11 @@ export default function TripForm({ onSubmit }) {
     }
   };
 
-  // Handle selecting a suggestion
   const handleSuggestionClick = (suggestion) => {
     setFormData((prev) => ({ ...prev, destination: suggestion }));
     setShowSuggestions(false);
   };
 
-  // Submit form
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
@@ -101,8 +108,6 @@ export default function TripForm({ onSubmit }) {
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           />
-
-          {/* Suggestions Dropdown */}
           {showSuggestions && (
             <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg w-full mt-1">
               {filteredDestinations.length > 0 ? (
@@ -121,9 +126,10 @@ export default function TripForm({ onSubmit }) {
             </ul>
           )}
         </div>
-        <div className="flex  items-center">
-          {/* Start Date with default to today */}
-          <div className="mb-4 pr-5">
+
+        {/* Dates and Days */}
+        <div className="flex items-center mb-4">
+          <div className="pr-5">
             <label
               htmlFor="startDate"
               className="block text-sm font-medium text-gray-700"
@@ -136,37 +142,37 @@ export default function TripForm({ onSubmit }) {
               id="startDate"
               value={formData.startDate}
               onChange={handleInputChange}
-              min={today} // Disable past dates
+              min={today}
               className="mt-1 block w-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm"
               required
             />
           </div>
-
-          {/* End Date */}
-          <div className="mb-4 p-5">
+          <div className="pl-5">
             <label
               htmlFor="endDate"
               className="block text-sm font-medium text-gray-700"
             >
               End Date
             </label>
-            <div className="flex">
-              <input
-                type="date"
-                name="endDate"
-                id="endDate"
-                value={formData.endDate}
-                onChange={handleInputChange}
-                min={formData.startDate} // Ensure end date is not before start date
-                className="mt-1 block w-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                required
-              />
-            </div>
+            <input
+              type="date"
+              name="endDate"
+              id="endDate"
+              value={formData.endDate}
+              onChange={handleInputChange}
+              min={formData.startDate}
+              className="mt-1 block w-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              required
+            />
           </div>
-          <span className="text-gray-500">
-            {getDateDifference(formData.startDate, formData.endDate)}
-          </span>
+          <div className="pl-5">
+            <label className="block text-sm font-medium text-gray-700">
+              Days
+            </label>
+            <span className="text-gray-500">{formData.days} days</span>
+          </div>
         </div>
+
         {/* Interests */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
@@ -221,6 +227,68 @@ export default function TripForm({ onSubmit }) {
             <option value="leisurely">Leisurely</option>
             <option value="moderate">Moderate</option>
             <option value="packed">Packed</option>
+          </select>
+        </div>
+
+        {/* Additional fields: Budget, Style, Season */}
+        <div className="mb-4">
+          <label
+            htmlFor="budget"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Budget Level
+          </label>
+          <select
+            name="budget"
+            id="budget"
+            value={formData.budget}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="budget">Budget</option>
+            <option value="mid-range">Mid-Range</option>
+            <option value="luxury">Luxury</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="style"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Travel Style
+          </label>
+          <select
+            name="style"
+            id="style"
+            value={formData.style}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="relaxing">Relaxing</option>
+            <option value="adventurous">Adventurous</option>
+            <option value="cultural">Cultural</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="season"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Season/Weather
+          </label>
+          <select
+            name="season"
+            id="season"
+            value={formData.season}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="autumn">Autumn</option>
+            <option value="winter">Winter</option>
           </select>
         </div>
 

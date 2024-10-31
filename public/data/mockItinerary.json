@@ -1,0 +1,100 @@
+{
+  "itinerary": [
+    {
+      "day": 1,
+      "activities": [
+        {
+          "description": "Visit the Louvre Museum and explore its art collection",
+          "location": "Louvre Museum, Paris",
+          "time": "10:00 AM - 2:00 PM"
+        },
+        {
+          "description": "Stroll through the historic Montmartre district",
+          "location": "Montmartre, Paris",
+          "time": "3:00 PM - 6:00 PM"
+        }
+      ],
+      "meals": [
+        {
+          "type": "Lunch",
+          "restaurant": "Le Consulat",
+          "location": "18 Rue Norvins, Paris"
+        },
+        {
+          "type": "Dinner",
+          "restaurant": "Le Relais de la Butte",
+          "location": "12 Rue Ravignan, Paris"
+        }
+      ],
+      "accommodation": {
+        "name": "Hotel Regina Louvre",
+        "address": "2 Place des Pyramides, Paris",
+        "price_range": "mid-range"
+      }
+    },
+    {
+      "day": 2,
+      "activities": [
+        {
+          "description": "Explore the Palace of Versailles and its gardens",
+          "location": "Palace of Versailles, Versailles",
+          "time": "9:00 AM - 3:00 PM"
+        },
+        {
+          "description": "Walk along the Seine River and enjoy the views",
+          "location": "Seine River, Paris",
+          "time": "4:00 PM - 6:00 PM"
+        }
+      ],
+      "meals": [
+        {
+          "type": "Lunch",
+          "restaurant": "La Petite Venise",
+          "location": "39 Quai de la Tournelle, Paris"
+        },
+        {
+          "type": "Dinner",
+          "restaurant": "Le Procope",
+          "location": "13 Rue de l'Ancienne Comédie, Paris"
+        }
+      ],
+      "accommodation": {
+        "name": "Hotel du Louvre",
+        "address": "141 Rue Saint-Honoré, Paris",
+        "price_range": "mid-range"
+      }
+    },
+    {
+      "day": 3,
+      "activities": [
+        {
+          "description": "Visit the Notre-Dame Cathedral and admire its architecture",
+          "location": "Notre-Dame Cathedral, Paris",
+          "time": "10:00 AM - 12:00 PM"
+        },
+        {
+          "description": "Indulge in a food tour of Parisian pastries and desserts",
+          "location": "Various locations in Paris",
+          "time": "1:00 PM - 4:00 PM"
+        }
+      ],
+      "meals": [
+        {
+          "type": "Lunch",
+          "restaurant": "Angelina",
+          "location": "226 Rue de Rivoli, Paris"
+        },
+        {
+          "type": "Dinner",
+          "restaurant": "Le Grand Véfour",
+          "location": "17 Rue de Beaujolais, Paris"
+        }
+      ],
+      "accommodation": {
+        "name": "Hotel Lutetia",
+        "address": "45 Boulevard Raspail, Paris",
+        "price_range": "mid-range"
+      }
+    }
+  ]
+}
