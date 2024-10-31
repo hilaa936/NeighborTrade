@@ -29,8 +29,15 @@ export default function TripPreferencesPage() {
   };
 
   return (
-    <div>
-      <h1>Select Your Trip Preferences</h1>
+    <div class="min-h-screen  items-center justify-center bg-gray-100">
+      <h1 class="text-3xl font-bold mb-4 text-center text-blue-600">
+        Plan Your Perfect Getaway
+      </h1>
+      <p class="text-gray-600 text-center mb-6">
+        Tell us a bit about what you're looking for, and we’ll create a
+        customized itinerary for your journey.
+      </p>
+
       <TripForm onSubmit={handleFormSubmit} />
     </div>
   );

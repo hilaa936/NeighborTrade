@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import DateDifference from "./DateDifference";
+import { getDateDifference } from "@/utils/formatDate";
 
 const DESTINATIONS = [
   "New York",
@@ -76,9 +78,7 @@ export default function TripForm({ onSubmit }) {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md">
-      <h1 className="text-2xl font-semibold mb-6">
-        Select Your Trip Preferences
-      </h1>
+      <h2 className="text-xl font-semibold mb-6">Fill Your Trip Preferences</h2>
 
       <form onSubmit={handleSubmit}>
         {/* Destination with Autocomplete */}
@@ -95,7 +95,7 @@ export default function TripForm({ onSubmit }) {
             id="destination"
             value={formData.destination}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm"
             required
             autoComplete="off"
             onFocus={() => setShowSuggestions(true)}
@@ -121,47 +121,52 @@ export default function TripForm({ onSubmit }) {
             </ul>
           )}
         </div>
+        <div className="flex  items-center">
+          {/* Start Date with default to today */}
+          <div className="mb-4 pr-5">
+            <label
+              htmlFor="startDate"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Start Date
+            </label>
+            <input
+              type="date"
+              name="startDate"
+              id="startDate"
+              value={formData.startDate}
+              onChange={handleInputChange}
+              min={today} // Disable past dates
+              className="mt-1 block w-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
 
-        {/* Start Date with default to today */}
-        <div className="mb-4">
-          <label
-            htmlFor="startDate"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Start Date
-          </label>
-          <input
-            type="date"
-            name="startDate"
-            id="startDate"
-            value={formData.startDate}
-            onChange={handleInputChange}
-            min={today} // Disable past dates
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-            required
-          />
+          {/* End Date */}
+          <div className="mb-4 p-5">
+            <label
+              htmlFor="endDate"
+              className="block text-sm font-medium text-gray-700"
+            >
+              End Date
+            </label>
+            <div className="flex">
+              <input
+                type="date"
+                name="endDate"
+                id="endDate"
+                value={formData.endDate}
+                onChange={handleInputChange}
+                min={formData.startDate} // Ensure end date is not before start date
+                className="mt-1 block w-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                required
+              />
+            </div>
+          </div>
+          <span className="text-gray-500">
+            {getDateDifference(formData.startDate, formData.endDate)}
+          </span>
         </div>
-
-        {/* End Date */}
-        <div className="mb-4">
-          <label
-            htmlFor="endDate"
-            className="block text-sm font-medium text-gray-700"
-          >
-            End Date
-          </label>
-          <input
-            type="date"
-            name="endDate"
-            id="endDate"
-            value={formData.endDate}
-            onChange={handleInputChange}
-            min={formData.startDate} // Ensure end date is not before start date
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-            required
-          />
-        </div>
-
         {/* Interests */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
