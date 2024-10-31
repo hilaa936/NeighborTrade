@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchAllProduce } from "@/services/produceService"; // Use the fetchAll function to get all produce
 import SearchBar from "@/app/tradingMarket/components/marketplace/SearchBar";
 import MarketplaceList from "../components/marketplace/MarketplaceList";
+import PageTitle from "@/components/layout/PageTitle";
 const produceList = [
   {
     id: 1,
@@ -93,9 +94,7 @@ export default function MarketplacePage() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
-        Marketplace
-      </h1>
+      <PageTitle title="Marketplace" />
 
       <div className="mb-6">
         <SearchBar onSearch={handleSearch} />

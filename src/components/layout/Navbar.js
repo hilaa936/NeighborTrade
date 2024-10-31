@@ -98,10 +98,10 @@ export default function Navbar() {
         <div className="md:hidden flex flex-col mt-4">
           {status === "unauthenticated" ? (
             <>
-              <Link href="/auth/login" className="py-2" onClick={toggleMenu}>
+              <Link href="/login" className="py-2" onClick={toggleMenu}>
                 Login
               </Link>
-              <Link href="/auth/register" className="py-2" onClick={toggleMenu}>
+              <Link href="/register" className="py-2" onClick={toggleMenu}>
                 Register
               </Link>
             </>
