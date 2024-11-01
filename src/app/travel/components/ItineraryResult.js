@@ -8,7 +8,7 @@ export default function ItineraryResult({ itinerary }) {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {itinerary.map((dayPlan, index) => (
+        {itinerary.days.map((dayPlan, index) => (
           <div
             key={index}
             className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 transition duration-300 hover:shadow-xl"

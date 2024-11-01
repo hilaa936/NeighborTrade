@@ -43,10 +43,14 @@ model User {
   
   profile         Profile?                                        // One-to-one relation with Profile
   profileId Int?
-                             
+  
+  //market                          
   produce   Produce[]                                // One-to-many relation with Produce (if user is a trader)
   proposedTrades Trade[] @relation("proposedTrades") 
   receivedTrades Trade[] @relation("receivedTrades")
+  
+  //travel
+  likedActivities UserActivity[]
 
   @@index([email])
   @@index([createdAt])
@@ -115,4 +119,27 @@ model TradeProduce {
 
   quantity    Int                                    // Quantity of produce being traded
   proposer    Boolean                                // True if offered by proposer, false if by responder
+}
+
+model Activity {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  location    String
+  destination String
+  time        String
+  likedBy     UserActivity[]
+}
+
+model UserActivity {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  activityId Int
+  likedAt    DateTime @default(now())
+  like    Boolean   
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
 }

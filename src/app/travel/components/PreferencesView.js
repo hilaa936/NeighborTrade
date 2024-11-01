@@ -63,6 +63,13 @@ const PreferencesView = ({ preferencesData }) => {
               </span>
               <span className="text-gray-700">{preferencesData.pace}</span>
             </div>
+            {/* style */}
+            <div className="flex justify-center items-center">
+              <span className="font-semibold text-gray-600 mr-2">
+                Travel style:
+              </span>
+              <span className="text-gray-700">{preferencesData.style}</span>
+            </div>
           </div>
         </div>
       )}

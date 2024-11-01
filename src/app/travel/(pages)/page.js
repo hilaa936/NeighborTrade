@@ -26,6 +26,7 @@ export default function TravelPage() {
       if (!response.ok) throw new Error("Failed to fetch itinerary");
 
       const data = await response.json();
+      debugger;
       setItinerary(data);
     } catch (err) {
       setError(err.message);
@@ -39,7 +40,7 @@ export default function TravelPage() {
       <TripForm onSubmit={fetchItinerary} />
       {loading && <p>Loading itinerary...</p>}
       {error && <p>Error: {error}</p>}
-      {itinerary && <ItineraryResult itinerary={itinerary.itinerary} />}
+      {itinerary && <ItineraryResult itinerary={itinerary} />}
     </div>
   );
 }

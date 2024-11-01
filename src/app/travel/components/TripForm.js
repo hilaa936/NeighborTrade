@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDateDifference } from "@/utils/formatDate";
+import TripTypeDropdown from "./TripTypeDropdown";
 
 const DESTINATIONS = [
   "New York",
@@ -18,7 +19,7 @@ export default function TripForm({ onSubmit }) {
   const today = new Date().toISOString().split("T")[0];
 
   const [formData, setFormData] = useState({
-    destination: "",
+    destination: DESTINATIONS[0],
     startDate: today,
     endDate: today,
     interests: [],
@@ -27,9 +28,15 @@ export default function TripForm({ onSubmit }) {
     style: "cultural",
     season: "spring",
     days: 1, // calculated from start and end dates
+    tripType: "",
+    customTripType: "",
   });
   const [filteredDestinations, setFilteredDestinations] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const handleFieldChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   useEffect(() => {
     const daysDifference = getDateDifference(
@@ -109,7 +116,7 @@ export default function TripForm({ onSubmit }) {
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           />
           {showSuggestions && (
-            <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg w-full mt-1">
+            <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg mt-1">
               {filteredDestinations.length > 0 ? (
                 filteredDestinations.map((suggestion, index) => (
                   <li
@@ -126,6 +133,11 @@ export default function TripForm({ onSubmit }) {
             </ul>
           )}
         </div>
+
+        <TripTypeDropdown
+          tripType={formData.tripType}
+          onFieldChange={handleFieldChange}
+        />
 
         {/* Dates and Days */}
         <div className="flex items-center mb-4">
@@ -222,7 +234,7 @@ export default function TripForm({ onSubmit }) {
             id="pace"
             value={formData.pace}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           >
             <option value="leisurely">Leisurely</option>
             <option value="moderate">Moderate</option>
@@ -243,7 +255,7 @@ export default function TripForm({ onSubmit }) {
             id="budget"
             value={formData.budget}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           >
             <option value="budget">Budget</option>
             <option value="mid-range">Mid-Range</option>
@@ -263,7 +275,7 @@ export default function TripForm({ onSubmit }) {
             id="style"
             value={formData.style}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           >
             <option value="relaxing">Relaxing</option>
             <option value="adventurous">Adventurous</option>
@@ -283,7 +295,7 @@ export default function TripForm({ onSubmit }) {
             id="season"
             value={formData.season}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           >
             <option value="spring">Spring</option>
             <option value="summer">Summer</option>
