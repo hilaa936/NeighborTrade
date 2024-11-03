@@ -1,18 +1,51 @@
+// components/CreateTrip.js
 import { useState } from "react";
-import { useRouter } from "next/router";
 import axios from "axios";
+const DESTINATIONS = [
+  "New York",
+  "Los Angeles",
+  "San Francisco",
+  "Miami",
+  "Chicago",
+  "Paris",
+  "London",
+  "Tokyo",
+  "Sydney",
+  "Rome",
+];
 
-const CreateTrip = ({ user }) => {
-  const router = useRouter();
+const CreateTrip = ({ onClose, userId, onTripCreated }) => {
+  const today = new Date().toISOString().split("T")[0];
 
   const [tripData, setTripData] = useState({
     name: "",
     userPreferences: {},
-    tripDate: "",
+    tripStartDate: today,
+    tripEndDate: today,
     tripType: "",
-    destination: "",
+    destination: "", // DESTINATIONS[0],
   });
 
+  const [filteredDestinations, setFilteredDestinations] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const handleDestInput = (e) => {
+    const { name, value, type, checked } = e.target;
+    setTripData((prev) => ({ ...prev, destination: value }));
+    if (value.length > 0) {
+      const suggestions = DESTINATIONS.filter((dest) =>
+        dest.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setFilteredDestinations(suggestions);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+  const handleSuggestionClick = (suggestion) => {
+    setTripData((prev) => ({ ...prev, destination: suggestion }));
+    setShowSuggestions(false);
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setTripData({
@@ -35,16 +68,17 @@ const CreateTrip = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/trip", { ...tripData, userId: user.id });
-      router.push("/trip"); // Redirect to trip overview page after successful creation
+      await axios.post("/api/travel/trip", { ...tripData, userId });
+      onTripCreated(); // Refresh trip list after successful creation
+      onClose(); // Close the modal
     } catch (error) {
       console.error("Error creating trip:", error);
     }
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Create New Trip</h1>
+    <div className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Create New Trip</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Trip Name */}
         <div>
@@ -62,20 +96,35 @@ const CreateTrip = ({ user }) => {
           />
         </div>
 
-        {/* Trip Date */}
+        {/* Trip Start Date */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Trip Date
+            Start Date
           </label>
           <input
             type="date"
-            name="tripDate"
-            value={tripData.tripDate}
+            name="tripStartDate"
+            min={today}
+            value={tripData.tripStartDate}
             onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           />
         </div>
 
+        {/* Trip End Date */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            End Date
+          </label>
+          <input
+            type="date"
+            name="tripEndDate"
+            value={tripData.tripEndDate}
+            min={tripData.tripStartDate}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
         {/* Trip Type */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -95,20 +144,43 @@ const CreateTrip = ({ user }) => {
             <option value="kids">With Kids</option>
           </select>
         </div>
-
-        {/* Destination */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
+        {/* Destination with Autocomplete */}
+        <div className="mb-4 relative">
+          <label
+            htmlFor="destination"
+            className="block text-sm font-medium text-gray-700"
+          >
             Destination
           </label>
           <input
             type="text"
             name="destination"
+            id="destination"
             value={tripData.destination}
-            onChange={handleInputChange}
-            placeholder="E.g., Greece"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            onChange={handleDestInput}
+            className="w-full mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+            autoComplete="off"
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           />
+          {showSuggestions && (
+            <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg mt-1">
+              {filteredDestinations.length > 0 ? (
+                filteredDestinations.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onMouseDown={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion}
+                  </li>
+                ))
+              ) : (
+                <li className="px-4 py-2 text-gray-500">No results found</li>
+              )}
+            </ul>
+          )}
         </div>
 
         {/* User Preferences */}

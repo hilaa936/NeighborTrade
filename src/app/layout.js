@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import { UserProvider } from "@/context/UserContext";
 
 const geistSans = localFont({
   src: "../styles/fonts/GeistVF.woff",
@@ -26,10 +27,12 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="flex flex-col min-h-screen">
         <SessionProviderWrapper>
-          <Header />
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
+          <UserProvider>
+            <Header />
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </UserProvider>
         </SessionProviderWrapper>
       </body>
     </html>
