@@ -68,8 +68,15 @@ export default function TripDetailsPage({ params }) {
       </p>
       <p>
         <strong>Interests:</strong>{" "}
-        {trip.userPreferences?.interests?.join(", ")}
+        {trip.userPreferences?.interests
+          ? trip.userPreferences.interests
+              .split(",")
+              .map((item) => item.trim())
+              .filter(Boolean)
+              .join(", ")
+          : "No interests available"}
       </p>
+
       <p>
         <strong>Budget Level:</strong>{" "}
         {trip.userPreferences?.budgetLevel || "Not specified"}
