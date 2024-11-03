@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { travelClient } from "@/lib/prisma/travelClient";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ async function parseRequestBody(request) {
 // Endpoint: Get All Activities
 export async function GET(req) {
   try {
-    const activities = await prisma.activity.findMany();
+    const activities = await travelClient.activity.findMany();
     return NextResponse.json(activities, { status: 200 });
   } catch (error) {
     console.error("Error fetching activities:", error);
@@ -27,7 +27,7 @@ export async function POST(request) {
     await parseRequestBody(request);
 
   try {
-    const newActivity = await prisma.activity.create({
+    const newActivity = await travelClient.activity.create({
       data: {
         name,
         description,
@@ -52,20 +52,20 @@ export async function PATCH(request) {
 
   try {
     // Check if the like already exists for the user and activity
-    const existingLike = await prisma.userActivity.findUnique({
+    const existingLike = await travelClient.userActivity.findUnique({
       where: { userId_activityId: { userId, activityId } },
     });
 
     if (existingLike) {
       // Toggle the like status
-      const updatedLike = await prisma.userActivity.update({
+      const updatedLike = await travelClient.userActivity.update({
         where: { userId_activityId: { userId, activityId } },
         data: { like: !existingLike.like },
       });
       return NextResponse.json(updatedLike, { status: 200 });
     } else {
       // Create a new like entry if it does not exist
-      const newLike = await prisma.userActivity.create({
+      const newLike = await travelClient.userActivity.create({
         data: {
           userId,
           activityId,
@@ -89,7 +89,7 @@ export async function DELETE(request) {
 
   try {
     // Update the like status to false instead of deleting the entry
-    const updatedLike = await prisma.userActivity.update({
+    const updatedLike = await travelClient.userActivity.update({
       where: {
         userId_activityId: { userId, activityId },
       },

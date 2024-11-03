@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Login from "../components/Login";
-import { Modal } from "components/layout/Modal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,9 +16,5 @@ export default function LoginPage() {
     }
   }, [session, router]);
 
-  return (
-    <Modal>
-      <Login signIn={signIn} />
-    </Modal>
-  );
+  return <Login signIn={signIn} />;
 }

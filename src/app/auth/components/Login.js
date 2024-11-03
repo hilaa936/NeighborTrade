@@ -25,7 +25,7 @@ const Login = ({ signIn }) => {
       setError(result.error);
     } else {
       // Redirect to the homepage or a protected page on successful login
-      router.push("/");
+      // router.push("/");
     }
 
     setLoading(false);

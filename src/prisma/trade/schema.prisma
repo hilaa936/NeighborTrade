@@ -1,0 +1,70 @@
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_TRADE")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../generated/trade" // Customize as needed
+}
+
+
+enum TradeStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+model Trader {
+  id              String    @id @default(uuid())                  // Unique identifier (UUID)
+  userId         String       // Required - Foreign key to link with User model
+  produce   Produce[]                                // One-to-many relation with Produce (if user is a trader)
+
+ @@map("produce") 
+}
+
+// trader's produce listing
+model Produce {
+  id          Int      @id @default(autoincrement())   // Unique identifier for produce
+  trader      Trader     @relation(fields: [traderId], references: [id]) // Foreign key to Trader (trader)
+  traderId    String                                 // trader (user) foreign key
+  name        String                                 // Name of the produce
+  description String?                                // Optional description of the produce
+  quantity    Int                                    // Quantity available for trade
+  isAvailable   Boolean   @default(true)               // Is the produce available for trade?
+  createdAt   DateTime  @default(now())              // Produce listing creation timestamp
+  updatedAt   DateTime  @updatedAt                   // Auto-updated timestamp
+
+  @@map("produces")                                    // Optional: Maps to "produce" table
+}
+
+// // Trade between two users involving produce
+// model Trade {
+//   id          Int      @id @default(autoincrement())  // Unique identifier for trade
+//   proposerId  String   // User initiating the trade
+//   proposer    User     @relation("proposedTrades", fields: [proposerId], references: [id]) // Initiating user
+//   responderId String   // User responding to the trade
+//   responder   User     @relation("receivedTrades", fields: [responderId], references: [id]) // Responding user
+
+//   tradeProduce TradeProduce[]                        // Produce involved in the trade
+
+//   status      String   @default("pending")            // Status of trade (e.g., pending, completed, canceled)
+//   createdAt   DateTime @default(now())                // Trade creation timestamp
+//   updatedAt   DateTime @updatedAt                     // Auto-updated timestamp
+
+//   @@map("trades")                                     // Optional: Maps to "trades" table
+// }
+
+
+// Many-to-many relationship between trades and produce
+// model TradeProduce {
+//   id          Int      @id @default(autoincrement())  // Unique identifier for the trade-produce relation
+//   tradeId     Int                                    // Foreign key to the trade
+//   trade       Trade    @relation(fields: [tradeId], references: [id], onDelete: Cascade) // Relation to the Trade
+//   produceId   Int                                    // Foreign key to the produce item
+//   produce     Produce  @relation(fields: [produceId], references: [id], onDelete: Cascade) // Relation to Produce
+//   quantity    Int                                    // Quantity of produce being traded
+//   proposer    Boolean                                // True if offered by proposer, false if by responder
+// }
+

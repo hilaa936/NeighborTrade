@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
 import { createUser, getUserByEmail } from "@/lib/user";
-import prisma from "@/lib/prisma"; // Assuming you are using Prisma
 
 export async function POST(request) {
   try {
-    const { name, email, password, provider, profilePicture } =
-      await request.json();
+    const { username, email, password } = await request.json();
 
     // Validate the input for both Google OAuth and email/password registration
-    if (!email || !name) {
+    if (!email || !username) {
       return NextResponse.json(
-        { error: "Name and email are required." },
+        { error: "Username and email are required." },
         { status: 400 }
       );
     }
@@ -25,66 +22,25 @@ export async function POST(request) {
       );
     }
 
-    // Handle email/password registration
-    if (!provider) {
-      if (!password) {
-        return NextResponse.json(
-          { error: "Password is required for email registration." },
-          { status: 400 }
-        );
-      }
+    // Create the new user with email/password
+    const newUser = await createUser({
+      username: username,
+      email: email,
+      password: password,
+    });
 
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Create the new user with email/password
-      const newUser = await createUser({
-        username: name,
-        email: email,
-        password: hashedPassword,
-      });
-
-      // Respond with success
-      return NextResponse.json(
-        { message: "User registered successfully!", user: newUser },
-        { status: 201 }
-      );
-    }
-
-    // Handle Google OAuth registration
-    if (provider === "Google") {
-      const newUser = await prisma.user.create({
-        data: {
-          username: name,
-          email: email,
-          provider: "Google",
-          profile: {
-            create: {
-              firstName: name.split(" ")[0],
-              lastName: name.split(" ")[1] || "",
-              profilePicture: profilePicture || null,
-            },
-          },
-        },
-      });
-
-      // Respond with success
-      return NextResponse.json(
-        { message: "Google user registered successfully!", user: newUser },
-        { status: 201 }
-      );
-    }
-
-    // If no valid registration type is provided
+    // Respond with success
     return NextResponse.json(
-      { error: "Invalid registration method." },
-      { status: 400 }
+      { message: "User registered successfully!", user: newUser },
+      { status: 201 }
     );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Something went wrong." },
-      { status: 500 }
-    );
+    console.error("Registration error:", error);
+
+    // Handle specific error messages
+    const errorMessage =
+      error.message || "Something went wrong with the registration.";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

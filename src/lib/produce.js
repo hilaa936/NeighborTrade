@@ -1,16 +1,16 @@
 // lib/produce.js
-import prisma from "@/lib/prisma";
 import mockData from "@/mock/mockData.json"; // Import mock data for fallback
+import tradeClient from "./prisma/tradeClient";
 
 export const createProduce = async (data) => {
-  return await prisma.produce.create({
+  return await tradeClient.produce.create({
     data,
   });
 };
 
 export const getAllAvailableProduce = async () => {
   try {
-    const allProduce = await prisma.produce.findMany({
+    const allProduce = await tradeClient.produce.findMany({
       where: { isAvailable: true },
       include: {
         trader: {
@@ -39,7 +39,7 @@ export const getAllAvailableProduce = async () => {
 };
 
 export const getProducesByTrader = async (traderId) => {
-  return await prisma.produce.findMany({
+  return await tradeClient.produce.findMany({
     where: {
       traderId,
       isAvailable: true,
@@ -47,7 +47,7 @@ export const getProducesByTrader = async (traderId) => {
   });
 };
 export const getAllTraderProduce = async (traderId) => {
-  return await prisma.produce.findMany({
+  return await tradeClient.produce.findMany({
     where: {
       traderId,
     },
@@ -58,7 +58,7 @@ export const getAllTraderProduce = async (traderId) => {
 };
 
 export const getProduceById = async (id) => {
-  return await prisma.produce.findUnique({
+  return await tradeClient.produce.findUnique({
     where: {
       id: parseInt(id, 10),
     },
@@ -66,7 +66,7 @@ export const getProduceById = async (id) => {
 };
 
 export const updateProduce = async (id, data) => {
-  return await prisma.produce.update({
+  return await tradeClient.produce.update({
     where: {
       id: parseInt(id, 10),
     },
@@ -75,7 +75,7 @@ export const updateProduce = async (id, data) => {
 };
 
 export const deleteProduce = async (id) => {
-  return await prisma.produce.update({
+  return await tradeClient.produce.update({
     where: {
       id: parseInt(id, 10),
     },

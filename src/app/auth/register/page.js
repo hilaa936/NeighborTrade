@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react"; // Import NextAuth signIn
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      const res = await fetch("/api/register", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,9 +70,9 @@ export default function RegisterPage() {
           </label>
           <input
             type="text"
-            name="name"
+            name="username"
             id="name"
-            value={form.name}
+            value={form.username}
             onChange={handleInputChange}
             required
             className="w-full mt-1 p-2 border rounded-md"

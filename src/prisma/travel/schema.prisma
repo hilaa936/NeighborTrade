@@ -1,0 +1,57 @@
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_TRAVEL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/travel"
+}
+
+// //enums
+// enum TripTypes {
+//   SOLO
+
+// }
+// enum TripStatus {
+//   PLANNING
+//   DONE
+// }
+
+
+model UserTrip {
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(255) // Required - e.g., "Honeymoon with my love"
+  userId         String       // Required - Foreign key to link with User model
+  userPreferences Json?    // Optional JSON object for preferences like interest, budget level, etc.
+  tripStartDate  DateTime? // Optional start date of the trip
+  tripEndDate    DateTime? // Optional end date of the trip  tripType       String?   @db.VarChar(50) // Optional trip type: solo, couple, friends, family, etc.
+  tripType       String?   @db.VarChar(50) // Optional trip type (e.g., solo, couple, family)
+  destination    String?   @db.VarChar(100) // Optional destination
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// model Activity {
+//   id          Int             @id @default(autoincrement())
+//   name        String
+//   description String?
+//   location    String
+//   destination String
+//   time        String
+//   likedBy     UserActivity[]
+// }
+
+// model UserActivity {
+//   id         Int      @id @default(autoincrement())
+//   userId     String
+//   activityId Int
+//   likedAt    DateTime @default(now())
+//   like    Boolean   
+  
+//   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+//   @@unique([userId, activityId])
+// }

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth/next"; // Import session handling
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Import your NextAuth configuration
-import prisma from "@/lib/prisma"; // Import Prisma Client
+import accountsClient from "@/lib/prisma/accountsClient";
 
 // Handle GET and POST requests to /api/profile
 export async function GET(request) {
@@ -18,7 +18,7 @@ export async function GET(request) {
 
   try {
     // Find the user's profile based on the userId
-    const profile = await prisma.profile.findUnique({
+    const profile = await accountsClient.profile.findUnique({
       where: { userId }, // Find the profile by userId
     });
 
@@ -65,13 +65,13 @@ export async function POST(request) {
 
   try {
     // Check if the profile already exists
-    const existingProfile = await prisma.profile.findUnique({
+    const existingProfile = await accountsClient.profile.findUnique({
       where: { userId },
     });
 
     if (existingProfile) {
       // If profile exists, update it
-      const updatedProfile = await prisma.profile.update({
+      const updatedProfile = await accountsClient.profile.update({
         where: { userId },
         data: {
           profilePicture,
@@ -88,7 +88,7 @@ export async function POST(request) {
       return new Response(JSON.stringify(updatedProfile), { status: 200 });
     } else {
       // If profile does not exist, create it
-      const newProfile = await prisma.profile.create({
+      const newProfile = await accountsClient.profile.create({
         data: {
           userId,
           profilePicture,

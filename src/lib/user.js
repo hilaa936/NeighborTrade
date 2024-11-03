@@ -1,6 +1,6 @@
 //lib/user.js
 import bcrypt from "bcrypt";
-import prisma from "@/lib/prisma";
+import accountsClient from "./prisma/accountsClient";
 
 // Number of salt rounds for bcrypt
 const SALT_ROUNDS = 10;
@@ -11,7 +11,7 @@ export const getUserByEmail = async (email) => {
     throw new Error("Email must be provided");
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await accountsClient.user.findUnique({
     where: { email },
   });
 
@@ -37,11 +37,17 @@ export const verifyUserPassword = async (password, hashedPassword) => {
 export const createUser = async ({
   username,
   email,
-  password,
-  profilePicture = "",
+  password = "",
+  picture = "",
   provider = "Email",
+  providerId = "",
+  firstName = "",
+  lastName = "",
 }) => {
-  if (provider === "Email" && (!username || !email || !password)) {
+  if (
+    provider === "Email" &&
+    (!username || !email || !password || password.length < 1)
+  ) {
     throw new Error("Username, email, and password are required");
   }
 
@@ -52,14 +58,19 @@ export const createUser = async ({
       : null;
 
     // Create user in the database
-    const newUser = await prisma.user.create({
+    const newUser = await accountsClient.user.create({
       data: {
         username,
         email,
         password: passwordHash,
+        provider: provider,
+        providerId: providerId,
+        image: picture,
         profile: {
           create: {
-            profilePicture: profilePicture,
+            firstName: firstName,
+            lastName: lastName,
+            profilePicture: picture,
           },
         },
       },
@@ -73,4 +84,12 @@ export const createUser = async ({
     }
     throw error; // Propagate other errors
   }
+};
+
+export const UpdateUserLastLogin = async ({ email }) => {
+  // Update user last login info
+  await accountsClient.user.update({
+    where: { email: email },
+    data: { lastLogin: new Date() },
+  });
 };

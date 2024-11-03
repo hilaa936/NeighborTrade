@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { fetchAllProduce } from "@/services/produceService"; // Use the fetchAll function to get all produce
 import SearchBar from "@/app/tradingMarket/components/marketplace/SearchBar";
-import MarketplaceList from "../components/marketplace/MarketplaceList";
 import PageTitle from "@/components/layout/PageTitle";
+import MarketplaceList from "../../components/marketplace/MarketplaceList";
 const produceList = [
   {
     id: 1,
