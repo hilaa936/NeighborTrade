@@ -8,12 +8,12 @@ const ActivitiesPage = () => {
   return (
     <div className="container mx-auto p-6">
       {/* AI activities */}
-      {/* <h1 className="text-3xl font-semibold text-center mb-6">
+      <h1 className="text-3xl font-semibold text-center mb-6">
         Find the Best Activities
       </h1>
-      <div className="w-auto">
+      <div className="w-full">
         <ActivitiesAI />
-      </div> */}
+      </div>
       {/* activities DB */}
       <div>
         <PageTitle title="Travel Activities" />

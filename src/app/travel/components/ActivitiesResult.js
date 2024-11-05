@@ -37,9 +37,8 @@ const ActivitiesResult = ({ activities }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-800">Top Activities</h2>
       <ul className="space-y-4">
-        {activities.map((activity, index) => (
+        {activities?.map((activity, index) => (
           <li
             key={index}
             className="relative p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200"

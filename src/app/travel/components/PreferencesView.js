@@ -9,7 +9,7 @@ const PreferencesView = ({ preferencesData }) => {
           <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
             Your Preferences Trip Details
           </h2>
-
+          <p>{preferencesData.description}</p>
           <div className="flex flex-col justify-center">
             {/* Destination */}
             <div className="flex justify-center items-center">
