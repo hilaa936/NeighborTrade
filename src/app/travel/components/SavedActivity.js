@@ -11,7 +11,6 @@ const SavedActivities = ({ activities, addActivity }) => {
     const fetchActivities = async () => {
       try {
         const response = await axios.get(`/api/travel/activities`);
-        debugger;
         setSavedActivities(response.data);
       } catch (error) {
         console.error("Error fetching liked activities:", error);

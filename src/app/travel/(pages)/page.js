@@ -26,7 +26,6 @@ export default function TravelPage() {
       if (!response.ok) throw new Error("Failed to fetch itinerary");
 
       const data = await response.json();
-      debugger;
       setItinerary(data);
     } catch (err) {
       setError(err.message);

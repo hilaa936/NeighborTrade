@@ -3,6 +3,7 @@ import axios from "axios";
 
 const TRAVEL_API_URL = "/api/travel/";
 const TRAVEL_TRIP_API_URL = "/api/travel/trip";
+
 export const fetchTrips = async () => {
   try {
     const response = await axios.get(TRAVEL_TRIP_API_URL);

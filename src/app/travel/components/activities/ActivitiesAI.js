@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
-import ActivitiesResult from "./ActivitiesResult";
+import ActivitiesResult from "../ActivitiesResult";
 import axios from "axios";
-import SavedActivities from "./SavedActivity";
+import SavedActivities from "../SavedActivity";
 
-const Activities = () => {
+const ActivitiesAI = () => {
   const [destination, setDestination] = useState("");
   const [activitiesData, setActivitiesData] = useState(null);
 
@@ -61,7 +61,7 @@ const Activities = () => {
   );
 };
 
-export default Activities;
+export default ActivitiesAI;
 
 // Mocked API Call
 async function fetchActivities(destination) {

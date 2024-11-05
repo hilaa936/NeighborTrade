@@ -34,24 +34,38 @@ model UserTrip {
   updatedAt      DateTime  @updatedAt
 }
 
-// model Activity {
-//   id          Int             @id @default(autoincrement())
-//   name        String
-//   description String?
-//   location    String
-//   destination String
-//   time        String
-//   likedBy     UserActivity[]
-// }
+// TravelDB Schema
 
-// model UserActivity {
-//   id         Int      @id @default(autoincrement())
-//   userId     String
-//   activityId Int
-//   likedAt    DateTime @default(now())
-//   like    Boolean   
+model Activity {
+  id          Int          @id @default(autoincrement())
+  name        String       // Name of the activity
+  description String?      // Optional description of the activity
+  location    String       // Location of the activity
+  category    String?      // Optional category of the activity
+  tags        String[]     // Array of tags associated with the activity
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  userActivities UserActivity[] // A list of user activities associated with this activity
+
+  @@map("activities")
+}
+
+model UserActivity {
+  id          Int          @id @default(autoincrement())
+  userId      String       // Foreign key to the user (string type)
+  activityId  Int          // Foreign key to the activity
+
+  // Additional fields to capture user-specific details about the activity
+  status      String?      // e.g., "Interested", "Going", "Not Going"
+  notes       String?      // Optional notes from the user about the activity
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  activity    Activity     @relation(fields: [activityId], references: [id])
   
-//   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-
-//   @@unique([userId, activityId])
-// }
+  @@unique([userId, activityId]) // Composite unique constraint
+  @@map("user_activities")
+}
