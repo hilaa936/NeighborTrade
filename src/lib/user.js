@@ -5,6 +5,14 @@ import accountsClient from "./prisma/accountsClient";
 // Number of salt rounds for bcrypt
 const SALT_ROUNDS = 10;
 
+// Fetch user by id
+export const getUserById = async (id) => {
+  const user = await accountsClient.user.findUnique({
+    where: { id },
+  });
+
+  return user;
+};
 // Fetch user by email
 export const getUserByEmail = async (email) => {
   if (!email) {

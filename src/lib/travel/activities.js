@@ -72,9 +72,7 @@ export async function getActivityById(activityId) {
 
 // Get Activities by User
 export async function getActivitiesByUser(userId) {
-  const user = await accountsClient.user.findUnique({
-    where: { id: userId },
-  });
+  const user = await getUserById(userId);
 
   if (!user) {
     throw new Error("User not found");

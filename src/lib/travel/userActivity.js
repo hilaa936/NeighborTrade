@@ -1,7 +1,7 @@
 // src/lib/travel/userActivity.js
 
-import accountsClient from "../prisma/accountsClient";
 import travelClient from "../prisma/travelClient";
+import { getUserById } from "@lib/user";
 
 // Add UserActivity
 export async function addUserActivity(userId, activityData) {
@@ -79,9 +79,7 @@ export async function deleteUserActivity(userActivityId) {
 
 // Get UserActivities
 export async function getUserActivities(userId) {
-  const user = await accountsClient.user.findUnique({
-    where: { id: userId },
-  });
+  const user = await getUserById(userId);
 
   if (!user) {
     throw new Error("User not found");

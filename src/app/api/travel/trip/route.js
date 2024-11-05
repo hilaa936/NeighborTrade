@@ -3,6 +3,7 @@ import travelClient from "@/lib/prisma/travelClient";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Import your NextAuth configuration
+import { getUserByEmail } from "@/lib/user";
 
 export async function POST(request) {
   const {
@@ -17,14 +18,12 @@ export async function POST(request) {
   try {
     // Get session to identify the logged-in user
     const session = await getServerSession({ request });
-    if (!session) {
+    if (!session || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user ID from AccountsDB
-    const user = await accountsClient.user.findUnique({
-      where: { email: session.user.email },
-    });
+    const user = await getUserByEmail(session.user.email);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
