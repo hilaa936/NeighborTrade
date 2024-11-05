@@ -22,7 +22,7 @@ export async function getActivityById(id) {
 
 // Create a new activity
 export async function createActivity(activityData) {
-  const response = await axios.post(`${API_URL}/activities`, { activityData });
+  const response = await axios.post(`${API_URL}/activities`, activityData);
   return response.data;
 }
 

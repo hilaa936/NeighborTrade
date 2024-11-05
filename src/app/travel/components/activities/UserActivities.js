@@ -22,8 +22,10 @@ const UserActivities = () => {
   }, [user]); // Optional: re-fetch if user changes
 
   return (
-    <div>
-      <h2>Your Activities</h2>
+    <div className="flex flex-col items-center w-full p-5 border-t-2">
+      <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+        Your Activities
+      </h2>
       {user ? (
         <>
           <ul>

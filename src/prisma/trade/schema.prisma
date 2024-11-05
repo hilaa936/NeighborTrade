@@ -19,15 +19,15 @@ enum TradeStatus {
 model Trader {
   id              String    @id @default(uuid())                  // Unique identifier (UUID)
   userId         String       // Required - Foreign key to link with User model
-  produce   Produce[]                                // One-to-many relation with Produce (if user is a trader)
+  // produce   Produce[]                                // One-to-many relation with Produce (if user is a trader)
 
- @@map("produce") 
+ @@map("traders") 
 }
 
 // trader's produce listing
 model Produce {
   id          Int      @id @default(autoincrement())   // Unique identifier for produce
-  trader      Trader     @relation(fields: [traderId], references: [id]) // Foreign key to Trader (trader)
+  // trader      Trader     @relation(fields: [traderId], references: [id]) // Foreign key to Trader (trader)
   traderId    String                                 // trader (user) foreign key
   name        String                                 // Name of the produce
   description String?                                // Optional description of the produce

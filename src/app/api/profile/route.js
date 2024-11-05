@@ -1,6 +1,11 @@
 import { getServerSession } from "next-auth/next"; // Import session handling
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Import your NextAuth configuration
 import accountsClient from "@/lib/prisma/accountsClient";
+import {
+  createNewProfile,
+  getProfileByUserId,
+  updateProfile,
+} from "@/lib/user";
 
 // Handle GET and POST requests to /api/profile
 export async function GET(request) {
@@ -18,10 +23,7 @@ export async function GET(request) {
 
   try {
     // Find the user's profile based on the userId
-    const profile = await accountsClient.profile.findUnique({
-      where: { userId }, // Find the profile by userId
-    });
-
+    const profile = await getProfileByUserId(userId);
     // If the profile does not exist, return 404
     if (!profile) {
       return new Response(JSON.stringify({ error: "Profile not found" }), {
@@ -65,43 +67,16 @@ export async function POST(request) {
 
   try {
     // Check if the profile already exists
-    const existingProfile = await accountsClient.profile.findUnique({
-      where: { userId },
-    });
+    const existingProfile = await getProfileByUserId(userId);
 
     if (existingProfile) {
       // If profile exists, update it
-      const updatedProfile = await accountsClient.profile.update({
-        where: { userId },
-        data: {
-          profilePicture,
-          firstName,
-          lastName,
-          bio,
-          phoneNumber,
-          location,
-          website,
-          birthdate: birthdate ? new Date(birthdate) : null, // Convert birthdate to Date
-        },
-      });
+      const updatedProfile = await updateProfile(userId, body);
 
       return new Response(JSON.stringify(updatedProfile), { status: 200 });
     } else {
       // If profile does not exist, create it
-      const newProfile = await accountsClient.profile.create({
-        data: {
-          userId,
-          profilePicture,
-          firstName,
-          lastName,
-          bio,
-          phoneNumber,
-          location,
-          website,
-          birthdate: birthdate ? new Date(birthdate) : null, // Convert birthdate to Date
-        },
-      });
-
+      const newProfile = await createNewProfile(userId, body);
       return new Response(JSON.stringify(newProfile), { status: 201 });
     }
   } catch (error) {

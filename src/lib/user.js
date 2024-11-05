@@ -93,3 +93,42 @@ export const UpdateUserLastLogin = async ({ email }) => {
     data: { lastLogin: new Date() },
   });
 };
+
+//profile
+export const createNewProfile = async (userId, profileData) => {
+  const newProfile = await accountsClient.profile.create({
+    data: {
+      userId,
+      ...profileData,
+    },
+  });
+
+  return newProfile;
+};
+export const updateProfile = async (userId, profileData) => {
+  const {
+    profilePicture,
+    firstName,
+    lastName,
+    bio,
+    phoneNumber,
+    location,
+    website,
+    birthdate,
+  } = profileData;
+  // birthdate = birthdate ? new Date(birthdate) : null; // Convert birthdate to Date
+  // If profile exists, update it
+  const updatedProfile = await accountsClient.profile.update({
+    where: { userId },
+    data: profileData,
+  });
+
+  return updatedProfile;
+};
+export const getProfileByUserId = async ({ userId }) => {
+  const profile = await accountsClient.profile.findUnique({
+    where: { userId }, // Find the profile by userId
+  });
+
+  return profile;
+};

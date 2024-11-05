@@ -61,7 +61,9 @@ const Activities = () => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <h2>All Activities</h2>
+      <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+        All Activities
+      </h2>
       <CreateActivityModal onCreated={handleActivityCreated} />
 
       <ul className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -82,7 +84,7 @@ const Activities = () => {
               </button>
 
               <ActivityInfo activity={activity} />
-              <AddUserActivityButton activity={activity} />
+              {/* <AddUserActivityButton activity={activity} /> */}
             </div>
           </li>
         ))}

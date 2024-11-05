@@ -9,7 +9,7 @@ import {
   deleteProduce,
 } from "@/services/produceService"; // Import the services
 import { useSession } from "next-auth/react"; // Import useSession from NextAuth
-import ProduceForm from "../components/ProduceForm";
+import ProduceForm from "../../components/ProduceForm";
 
 export default function ProduceManagementPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);

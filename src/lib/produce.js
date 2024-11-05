@@ -12,15 +12,6 @@ export const getAllAvailableProduce = async () => {
   try {
     const allProduce = await tradeClient.produce.findMany({
       where: { isAvailable: true },
-      include: {
-        trader: {
-          // Assuming "trader" is the relation field to the User model
-          select: {
-            username: true,
-            // profilePicture: true, // Assuming trader profile has a picture
-          },
-        },
-      },
     });
     return allProduce;
   } catch (error) {
