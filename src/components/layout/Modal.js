@@ -3,12 +3,21 @@
 // components/Modal.js
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
-
+  // Close modal on outside click
+  const handleOutsideClick = (e) => {
+    if (e.target.id === "modal-background") {
+      onClose();
+    }
+  };
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
-      <div className="relative bg-white p-6 rounded-lg w-96">
+    <div
+      id="modal-background"
+      onClick={handleOutsideClick}
+      className="fixed inset-0  bg-black bg-opacity-50 flex items-center justify-center z-30"
+    >
+      <div className="relative bg-white p-6 rounded-lg w-full sm:w-96">
         <button
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+          className="absolute text-lg top-2 right-2 text-gray-600 hover:text-gray-800"
           onClick={onClose}
         >
           &times;

@@ -140,9 +140,9 @@ export default function Navbar() {
       {isOpen && (
         <>
           <div
-            className={`absolute top-28 right-0  w-full sm:w-2/4 bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out transform ${
+            className={`absolute top-28 right-0  md:hidden w-full sm:w-2/4 bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out transform ${
               isOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"
-            } origin-top`}
+            }`}
           >
             <ul className="flex flex-col items-center space-y-4 py-4">
               {navLinks.map((link) => (

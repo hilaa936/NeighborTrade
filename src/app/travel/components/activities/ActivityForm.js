@@ -36,10 +36,7 @@ const ActivityForm = ({ onCreated }) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-lg mx-auto p-6 border rounded-lg shadow-lg bg-white"
-    >
+    <form onSubmit={handleSubmit} className=" p-6 bg-white">
       <h2 className="text-xl font-semibold mb-4">Create Activity</h2>
       <div className="mb-4">
         <label

@@ -1,7 +1,7 @@
 // src/lib/travel/userActivity.js
 
 import travelClient from "../prisma/travelClient";
-import { getUserById } from "@lib/user";
+import { getUserById } from "@/lib/user";
 
 // Add UserActivity
 export async function addUserActivity(userId, activityData) {
