@@ -1,31 +1,16 @@
-"use client";
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import AuthCard from "@/components/auth/AuthCard";
 
-export default function ErrorPage() {
+// NextAuth sends sign-in failures here (?error=...); the code itself is not shown to users
+export default async function AuthErrorPage() {
+  const t = await getTranslations("auth");
   return (
-    <Suspense>
-      <ErrorContent />
-    </Suspense>
-  );
-}
-
-function ErrorContent() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-
-  return (
-    <div className="max-w-md mx-auto mt-8 p-4 border rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Login Error</h2>
-      <p className="text-red-500 mb-4">
-        {error || "Unknown error occurred during login"}
-      </p>
-      <a
-        href="/auth/login"
-        className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-      >
-        Back to Login
-      </a>
-    </div>
+    <AuthCard title={t("errorTitle")}>
+      <p className="text-center text-stone-600">{t("errorBody")}</p>
+      <Link href="/auth/login" className="btn btn-primary w-full">
+        {t("backToLogin")}
+      </Link>
+    </AuthCard>
   );
 }

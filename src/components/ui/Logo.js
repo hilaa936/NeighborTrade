@@ -1,0 +1,23 @@
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+
+export function LogoMark({ className = "h-8 w-8" }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden>
+      <circle cx="16" cy="16" r="16" fill="#2e6f35" />
+      <path d="M16 25V14" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+      <path d="M16 16c0-4 3-7 8-7 0 5-3 8-8 7Z" fill="#b9debb" />
+      <path d="M16 19c0-3.5-2.6-6-7-6 0 4.4 2.6 6.6 7 6Z" fill="#dcefdc" />
+    </svg>
+  );
+}
+
+export default function Logo() {
+  const t = useTranslations("app");
+  return (
+    <Link href="/" className="flex items-center gap-2 font-bold text-leaf-800">
+      <LogoMark />
+      <span className="text-lg">{t("name")}</span>
+    </Link>
+  );
+}

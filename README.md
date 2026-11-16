@@ -1,198 +1,67 @@
-# NeighborTrade
+# שכנים מגדלים (NeighborTrade)
 
-A community-driven platform for home growers to trade their surplus fruits, vegetables, and plants. Built with Next.js, NextAuth, Prisma, and PostgreSQL.
+A community web app for home growers: neighbors post surplus vegetables, fruit, herbs, plants and seeds, and others ask for them in a chat, for free or in exchange. There is no money and no prices. The UI is Hebrew/RTL, built on i18n so more languages can be added.
 
-# Produce Exchange Platform
+## Features
 
-A community-driven platform for individuals who grow edible plants, fruits, and vegetables at home. The platform enables users to connect, trade, and exchange their homegrown produce with others in their local area. Built using modern web technologies, it aims to foster a community of home gardeners who can share their surplus harvests.
+- **Market**: search (Hebrew-aware), categories, offer type (free / exchange / open to offers), distance filter.
+- **Location privacy**: users pick a locality (or share a location rounded to ~1 km). Others only ever see "in your city", an approximate distance, or the city name. Coordinates never reach the client, and uploaded photos are re-encoded to strip EXIF/GPS.
+- **Listings**: photos (up to 3), quantity and unit, custom categories, expiry (3–30 days) or "always available".
+- **Messages**: one chat per listing and neighbor, laid out like a messaging app, with unread badges (polling).
+- **Trades**: either side proposes "what was agreed" (quantity + terms); the other accepts. The quantity comes off the listing, and the trade can then be marked handed over or cancelled (which returns the quantity).
 
-## Key Features
+## Stack
 
-- **User Registration & Authentication**: Supports sign-up using email/password and Google OAuth.
-- **Role-Based Access**: General users can browse the marketplace, while growers can list and manage their produce.
-- **Profile Management**: Users can update their profiles and optionally register as growers.
-- **Produce Management**: Growers can create listings, edit, and manage their available produce.
-- **Marketplace**: A public page showcasing available produce, allowing users to contact growers and propose trades.
-- **Trading System**: Facilitates the exchange of produce between growers, encouraging communication and community-building.
+Next.js 16 (App Router), React 19, NextAuth v4 (email/password + optional Google), Prisma 5 + PostgreSQL, next-intl, Tailwind CSS 3, zod, sharp. Tests use Vitest (service layer against a real test DB) and Playwright (end to end, desktop + mobile).
 
-## Tech Stack
+## Getting started
 
-- **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/)
-- **Backend**: [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction)
-- **Authentication**: [NextAuth](https://next-auth.js.org/) for email/password and OAuth.
-- **Database**: [Prisma](https://www.prisma.io/) as the ORM and [PostgreSQL](https://www.postgresql.org/) for persistent storage.
+Requires Node 20.9+ and PostgreSQL.
 
-## Project Setup
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v14+)
-- [PostgreSQL](https://www.postgresql.org/) database instance
-- [Git](https://git-scm.com/) for version control
-
-- Run Postgres Server on Terminal :
-  - macOS: `brew services start postgresql`
-
-### Getting Started
-
-1. **Clone the Repository**
-
-   ```bash
-   git clone https://github.com/your-username/produce-exchange-platform.git
-   cd produce-exchange-platform
-   ```
-
-2. **Install Dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Set Up Environment Variables**
-
-   - Create a `.env` file in the root directory and add the following:
-
-   ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/produce_exchange_db"
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-random-secret-key"
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   ```
-
-4. **Set Up the Database**
-
-   - Run the Prisma migrations to set up the database schema:
-
-   ```bash
-   npx prisma migrate dev --name init
-   ```
-
-5. **Run the Development Server**
-   ```bash
-   npm run dev
-   ```
-   - The app will be available at `http://localhost:3000`.
-6. **Set Up a Google OAuth 2.0 Client in Google Developer Console**
-   steps
-
-   1. Go to the [Google Developer Console](https://console.developers.google.com/).
-
-   2. **Create a new project** (or select an existing project).
-
-      - Click on the project dropdown (top of the page) and select "New Project."
-
-   3. **Enable OAuth Consent Screen:**
-
-      - In the left sidebar, navigate to `API's and Services` **"OAuth consent screen."**
-      - Choose **"External"** if the app is for public use.
-      - Fill out the required fields:
-      - **App name**
-      - **User support email**
-      - **Developer contact information**
-      - Click **Save and Continue.**
-
-   4. **Create OAuth 2.0 Credentials:**
-
-      - In the left sidebar, go to **"Credentials."**
-      - Click **"Create credentials"** and choose **"OAuth client ID."**
-      - Select **"Web application"** as the application type.
-      - Set a name for the OAuth client (e.g., "Next.js OAuth").
-      - **Add authorized redirect URIs:**
-      - For local development, add: `http://localhost:3000/api/auth/callback/google`
-      - For production, add the production URL (e.g., `https://yourdomain.com/api/auth/callback/google`)
-      - Click **Create.**
-
-   5. **Copy the Client ID and Client Secret:**
-
-      - After creating the OAuth client, you'll see a dialog with the **Client ID** and **Client Secret.**
-      - Copy these values as you'll need them for your environment variables.
-
-   6. **Set Up Environment Variables in Next.js**
-
-      Add the following environment variables to the `.env` file:
-
-      ```env
-      GOOGLE_CLIENT_ID=your-google-client-id
-      GOOGLE_CLIENT_SECRET=your-google-client-secret
-      NEXTAUTH_SECRET=your-random-secret-string
-      NEXTAUTH_URL=http://localhost:3000
-      ```
-
-## Project Structure
-
-```
-my-produce-app/
-├── src/
-│   ├── app/                     # Contains page components and route handlers (Next.js App Router)
-│   │   ├── marketplace/         # Marketplace-related pages
-│   │   │   └── page.js          # Marketplace page
-│   │   ├── profile/             # Profile management pages
-│   │   │   └── page.js          # Profile page
-│   │   └── page.js              # Homepage
-│   │
-│   ├── components/
-│   │   └── layout/
-|   |       ├── Header.js            # Example header component
-│   │       └── Footer.js            # Footer component (example)
-│   │
-│   ├── lib/                     # Utility functions (e.g., authentication helpers, API calls)
-│   │   └── auth.js              # Authentication utility functions (example)
-│   │
-│   ├── styles/                  # Global and component-specific styles
-│   │   └── globals.css          # Global styles (includes Tailwind CSS)
-│
-├── public/                      # Public assets (e.g., images, icons)
-│   ├── favicon.ico              # Favicon
-│   └── logo.png                 # Example logo image
-│
-├── .eslintrc.json               # ESLint configuration file
-├── next.config.js               # Next.js configuration
-├── package.json                 # Project dependencies
-├── postcss.config.js            # PostCSS configuration for Tailwind
-├── tailwind.config.js           # Tailwind CSS configuration
-└── README.md                    # Project README
-
-
-
+```bash
+npm install
+cp .env.example .env          # set DATABASE_URL, DATABASE_URL_TEST, NEXTAUTH_SECRET
+createdb neighbortrade_dev && createdb neighbortrade_test
+npx prisma migrate dev        # create the schema
+npm run db:seed               # demo data (wipes the dev DB!) – every demo user's password is password123
+npm run dev                   # http://localhost:3000
 ```
 
-## Future Enhancements
+Demo users: `dana@example.com`, `yossi@example.com`, `maya@example.com`, `ahmad@example.com`, `rivka@example.com`, `omer@example.com`.
 
-- **Local Area Filtering**: Implement search filters based on location.
-- **Push Notifications**: Notify growers about new trade proposals or messages.
-- **Payment Integration**: Allow payment for produce (post-MVP).
+## Scripts
 
-## Contributing
+| Script | What it does |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` / `npm start` | Production build / server |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest service tests (uses `DATABASE_URL_TEST`, wipes it) |
+| `npm run test:e2e` | Playwright: builds the app and runs it on port 3100 against the test DB |
+| `npm run db:migrate` | Create/apply a migration after editing `prisma/schema.prisma` |
+| `npm run db:seed` | Reset the dev DB with demo data |
 
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Make your changes and commit them:
-   ```bash
-   git commit -m "Add some feature"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a pull request.
+## Project layout
 
-## License
+```
+prisma/              schema, migrations, seed
+messages/he.json     all UI text (add <locale>.json + src/i18n/config.js for a new language)
+src/app/             pages and API route handlers (thin)
+src/server/          business logic + authorization (db, auth, listings, chat, trades, uploads, validation)
+src/lib/             shared client/server helpers (options, localities, geo, search, api client)
+src/components/      UI components
+src/proxy.js         redirects guests away from private pages (pages/APIs check the session too)
+tests/server, tests/e2e
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+API errors are returned as `{ error: "<code>" }`, and the client translates the code with `errors.<code>` in the messages file.
 
-## Acknowledgements
+## Before deploying
 
-- [Next.js](https://nextjs.org/)
-- [NextAuth](https://next-auth.js.org/)
-- [Prisma](https://www.prisma.io/)
-- [PostgreSQL](https://www.postgresql.org/)
+See `PROJECT_REVIEW.md` (Hebrew) for the full plan. In short:
 
-### Check Your Database
-
-Optionally, you can check your database schema using Prisma Studio:
-run on terminal `npx prisma studio`
-This will open up Prisma Studio in your browser, where you can visually inspect your updated database structure, create test records, and manage your data
+- **Image storage**: `src/server/uploads.js` writes to local `uploads/`. On serverless hosting, replace it with object storage (e.g. Vercel Blob).
+- **Rate limiting**: `src/server/rateLimit.js` is in-memory, so it only works on a single instance. Use Redis/Upstash on multi-instance hosts.
+- **Secrets**: generate a strong `NEXTAUTH_SECRET` and use per-environment Google OAuth credentials.
+- **Migrations**: run `npx prisma migrate deploy` on deploy.
+- **Legal**: the terms and privacy pages are drafts and need a legal review.

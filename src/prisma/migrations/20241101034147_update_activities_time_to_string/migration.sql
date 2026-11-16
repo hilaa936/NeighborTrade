@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Activity" ALTER COLUMN "time" SET DATA TYPE TEXT;

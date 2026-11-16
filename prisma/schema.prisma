@@ -1,0 +1,162 @@
+// Single database for the whole app (users, listings, chat, trades)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Unit {
+  KG
+  UNIT
+  BUNCH
+  BAG
+  POT
+}
+
+enum ListingStatus {
+  ACTIVE
+  PAUSED
+  DELETED
+}
+
+enum MessageKind {
+  TEXT
+  TRADE // a trade proposal or a change in its status
+}
+
+enum TradeStatus {
+  PROPOSED
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String?
+  name         String
+  image        String?
+  bio          String?
+  role         Role      @default(USER)
+  provider     String    @default("credentials")
+  // Approximate home location: a locality code plus coordinates rounded to ~1 km.
+  // Never sent to other users; only used to compute distances.
+  localityId   String?
+  lat          Float?
+  lng          Float?
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  listings         Listing[]
+  buyerChats       Conversation[] @relation("buyer")
+  sellerChats      Conversation[] @relation("seller")
+  messages         Message[]
+  proposedTrades   Trade[]        @relation("proposer")
+
+  @@map("users")
+}
+
+model Listing {
+  id             String        @id @default(cuid())
+  ownerId        String
+  owner          User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  category       String // key from the categories list, or "other"
+  customCategory String?
+  quantity       Float
+  unit           Unit
+  isFree         Boolean       @default(false)
+  isExchange     Boolean       @default(false)
+  wanted         String? // what the owner is looking for in exchange
+  openToOffers   Boolean       @default(false)
+  images         String[]
+  searchText     String        @default("") // normalized text for search (see lib/search.js)
+  // Copied from the owner's approximate location when the listing is saved
+  localityId     String?
+  lat            Float?
+  lng            Float?
+  status         ListingStatus @default(ACTIVE)
+  expiresAt      DateTime? // null = always available
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  conversations Conversation[]
+  trades        Trade[]
+
+  @@index([status, expiresAt])
+  @@index([ownerId])
+  @@map("listings")
+}
+
+model Conversation {
+  id             String    @id @default(cuid())
+  listingId      String
+  listing        Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyerId        String
+  buyer          User      @relation("buyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId       String
+  seller         User      @relation("seller", fields: [sellerId], references: [id], onDelete: Cascade)
+  buyerReadAt    DateTime  @default(now())
+  sellerReadAt   DateTime  @default(now())
+  lastMessageAt  DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+
+  messages Message[]
+  trades   Trade[]
+
+  @@unique([listingId, buyerId])
+  @@index([buyerId, lastMessageAt])
+  @@index([sellerId, lastMessageAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  kind           MessageKind  @default(TEXT)
+  body           String?
+  tradeId        String?
+  trade          Trade?       @relation(fields: [tradeId], references: [id], onDelete: SetNull)
+  tradeStatus    TradeStatus? // the status this message announced (for TRADE messages)
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+  @@map("messages")
+}
+
+model Trade {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  listingId      String
+  listing        Listing      @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  proposerId     String
+  proposer       User         @relation("proposer", fields: [proposerId], references: [id], onDelete: Cascade)
+  quantity       Float
+  terms          String // what was agreed, e.g. "free" or "for a jar of honey"
+  status         TradeStatus  @default(PROPOSED)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  messages Message[]
+
+  @@index([conversationId])
+  @@map("trades")
+}

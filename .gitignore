@@ -42,9 +42,10 @@ next-env.d.ts
 .vscode/
 .idea/
 
-#ignore prisma generated files
-/src/prisma/generated
-/src/prisma/accounts/migrations
-/src/prisma/trade/migrations
-/src/prisma/travel/migrations
-/src/prisma/migrations
+
+# local uploads (dev storage for images)
+/uploads
+
+# test output
+/test-results
+/playwright-report
