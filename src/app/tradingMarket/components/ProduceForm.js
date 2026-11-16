@@ -1,24 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
+// The parent passes a `key` per produce, so initial state is reset on switch
 export default function ProduceForm({ produce = null, onClose, onSubmit }) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [name, setName] = useState(produce?.name || "");
+  const [description, setDescription] = useState(produce?.description || "");
+  const [quantity, setQuantity] = useState(produce?.quantity || 1);
   const [loading, setLoading] = useState(false); // Loading state for form
-
-  useEffect(() => {
-    if (produce) {
-      setName(produce.name);
-      setDescription(produce.description || "");
-      setQuantity(produce.quantity || 1);
-    } else {
-      setName("");
-      setDescription("");
-      setQuantity(1);
-    }
-  }, [produce]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -5,7 +5,7 @@ import { getProduceById, updateProduce, deleteProduce } from "@/lib/produce";
 // GET /api/produce/:id: Fetch specific produce by ID
 export async function GET(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const produce = await getProduceById(id);
     if (!produce) {
@@ -21,7 +21,7 @@ export async function GET(req, { params }) {
 // PUT /api/produce/:id: Update specific produce
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
     const updatedProduce = await updateProduce(id, body);
@@ -34,7 +34,7 @@ export async function PUT(req, { params }) {
 // DELETE /api/produce/:id: Remove or disable specific produce (soft delete)
 export async function DELETE(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const deletedProduce = await deleteProduce(id);
     return NextResponse.json(deletedProduce, { status: 200 });

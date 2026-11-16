@@ -12,8 +12,8 @@ import {
 } from "@heroicons/react/24/outline"; // Ensure these imports are correct and the icons are from @heroicons/react
 
 const navLinks = [
-  { title: "Trips", link: "/travel/trip" },
-  { title: "Activities", link: "/travel/activities" },
+  { title: "Marketplace", link: "/tradingMarket/marketplace" },
+  { title: "My Produce", link: "/tradingMarket/produce" },
 ];
 
 // Updated authLink with label, link, and icon properties

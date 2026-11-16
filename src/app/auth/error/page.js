@@ -1,7 +1,16 @@
 "use client";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function ErrorPage() {
+  return (
+    <Suspense>
+      <ErrorContent />
+    </Suspense>
+  );
+}
+
+function ErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 

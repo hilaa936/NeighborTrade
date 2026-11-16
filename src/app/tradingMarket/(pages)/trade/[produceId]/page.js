@@ -1,11 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React from "react";
 
-const TradePage = ({ params }) => {
-  const router = useRouter();
-  const { produceId } = params; // Access the produceId from the URL
+const TradePage = () => {
+  const { produceId } = useParams(); // Access the produceId from the URL
 
   return (
     <div className="p-6">

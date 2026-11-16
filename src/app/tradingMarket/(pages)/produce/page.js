@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ProducesList from "@/app/tradingMarket/components/ProducesList";
 import {
   fetchTraderProduce,
@@ -18,26 +18,30 @@ export default function ProduceManagementPage() {
   const [loading, setLoading] = useState(true); // Loading state for fetching data
   const [submitting, setSubmitting] = useState(false); // Loading state for form submission
   const { data: session } = useSession(); // Get session data (traderId)
+  const userId = session?.user?.id;
 
-  useEffect(() => {
-    // Only fetch data if the session is available
-    if (session?.user?.id) {
-      loadProduces();
-    }
-  }, [session]); // Run when session changes
-
-  // Load produce data
-  const loadProduces = async () => {
+  // Reload produce data after changes (keeps the current list on screen)
+  const loadProduces = useCallback(async () => {
     try {
-      setLoading(true);
-      const data = await fetchTraderProduce(session.user.id); // Fetch produces by traderId (session user id)
+      const data = await fetchTraderProduce(userId); // Fetch produces by traderId (session user id)
       setProduces(data); // Set the fetched produces to the state
     } catch (error) {
       console.error("Error fetching produces:", error);
-    } finally {
-      setLoading(false); // Stop the loading state
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    // Only fetch data if the session is available
+    if (!userId) return;
+    let ignore = false; // Skip stale responses if the user changes mid-request
+    fetchTraderProduce(userId)
+      .then((data) => !ignore && setProduces(data))
+      .catch((error) => console.error("Error fetching produces:", error))
+      .finally(() => !ignore && setLoading(false));
+    return () => {
+      ignore = true;
+    };
+  }, [userId]); // Run when the logged-in user changes
 
   // Handle edit button click
   const handleEditProduce = (produce) => {
@@ -117,6 +121,7 @@ export default function ProduceManagementPage() {
         }`}
       >
         <ProduceForm
+          key={currentProduce?.id ?? "new"} // Remount to reset the form when switching items
           produce={currentProduce}
           onClose={handleCloseForm}
           onSubmit={handleFormSubmit}
