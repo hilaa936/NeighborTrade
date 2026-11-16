@@ -1,4 +1,4 @@
-# שכנים מגדלים (NeighborTrade)
+# שוק קחתן (NeighborTrade)
 
 A community web app for home growers: neighbors post surplus vegetables, fruit, herbs, plants and seeds, and others ask for them in a chat, for free or in exchange. There is no money and no prices. The UI is Hebrew/RTL, built on i18n so more languages can be added.
 
